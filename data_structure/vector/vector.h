@@ -14,10 +14,10 @@ protected:
 public:
     // 构造函数
     Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = 0) {
-	_elem = new T[_capacity=c];
-	for (_size = 0; _size < s; _size++) {
-	    _elem[_size] = v;
-	}
+        _elem = new T[_capacity=c];
+        for (_size = 0; _size < s; _size++) {
+            _elem[_size] = v;
+        }
     }
     Vector(T const* A, Rank lo, Rank hi) { copyFrom(A, lo, hi); }
     Vector(T const* A, Rank n) { copyFrom(A, 0, n); }
@@ -53,7 +53,7 @@ const T& Vector<T>::operator[] (Rank r) const {
 
 template <typename T>
 void p(T& x) {
-	printf("%d,", x);
+    printf("%d,", x);
 }
 
 template <typename T>
@@ -68,7 +68,7 @@ void Vector<T>::copyFrom(T const* A, Rank lo, Rank hi) {
     _elem = new T[(hi - lo) * 2];
     _size = 0;
     while (lo < hi) {
-	_elem[_size++] = A[lo++];
+        _elem[_size++] = A[lo++];
     }
 }
 
@@ -79,16 +79,21 @@ void Vector<T>::expand() {
     T* oldElem = _elem;
     _elem = new T[ _capacity <<= 1 ];
     for(int i=0; i < _size; i++) {
-	_elem[i] = oldElem[i];
+        _elem[i] = oldElem[i];
     }
     delete [] oldElem;
+}
+
+template <typename T>
+void Vector<T>::shrink() {
+
 }
 
 template <typename T>
 Rank Vector<T>::insert(Rank r, T const& e) {
     expand();
     for (int i=_size; i > r; i--) {
-	_elem[i] = _elem[i-1];
+        _elem[i] = _elem[i-1];
     }
     _elem[r] = e;
     _size++;
@@ -98,6 +103,6 @@ Rank Vector<T>::insert(Rank r, T const& e) {
 template <typename T>
 void Vector<T>::traverse(void (*visit)( T& )) {
     for(int i=0; i < _size; i++) {
-    	visit(_elem[i]);
+        visit(_elem[i]);
     }
 }
