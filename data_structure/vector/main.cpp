@@ -10,4 +10,8 @@ int main(int argc, char* argv[]){
     V.insert(4);
 
     print(V);
+
+    V.insert(5);
+
+    print(V);
 }

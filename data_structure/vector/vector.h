@@ -26,14 +26,17 @@ public:
     // 析构函数
     ~Vector() { delete [] _elem; }
 
-    Rank size() { return _size; }
-    int capacity() { return _capacity; }
+    Rank size() const { return _size; }
+    // TODO: 容量打印结果不对
+    int capacity() const { return _capacity; }
 
     T& operator[] (Rank r);
     const T& operator[] (Rank r) const;
 
     Rank insert(Rank r, T const& e);
     Rank insert(T const& e) { return insert(_size, e); }
+
+    void traverse( void ( * ) ( T& ) );
 };
 
 
@@ -49,8 +52,15 @@ const T& Vector<T>::operator[] (Rank r) const {
 }
 
 template <typename T>
+void p(T& x) {
+	printf("%d,", x);
+}
+
+template <typename T>
 void print(Vector<T> v) {
     printf("size:%d, cap:%d\n", v.size(), v.capacity());
+    v.traverse(p);
+    printf("\n");
 }
 
 template <typename T>
@@ -83,4 +93,11 @@ Rank Vector<T>::insert(Rank r, T const& e) {
     _elem[r] = e;
     _size++;
     return r;
+}
+
+template <typename T>
+void Vector<T>::traverse(void (*visit)( T& )) {
+    for(int i=0; i < _size; i++) {
+    	visit(_elem[i]);
+    }
 }
