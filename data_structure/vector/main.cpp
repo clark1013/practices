@@ -8,10 +8,15 @@ int main(int argc, char* argv[]){
     V.insert(2);
     V.insert(3);
     V.insert(4);
+    V.insert(5);
 
     print(V);
 
-    V.insert(5);
+    V.unsort();
+    print(V);
+
+    V.remove(0);
+    V.remove(1,3);
 
     print(V);
 }

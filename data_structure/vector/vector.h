@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 
 typedef int Rank;
 #define DEFAULT_CAPACITY 3
@@ -11,6 +12,8 @@ protected:
     void copyFrom(T const* A, Rank lo, Rank hi);  // 复制数组区间A[lo, hi)
     void expand();  // 扩容
     void shrink();  // 缩容
+    void bubbleSort(Rank lo, Rank hi);
+    void mergeSort(Rank lo, Rank hi);
 public:
     // 构造函数
     Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = 0) {
@@ -33,8 +36,14 @@ public:
     T& operator[] (Rank r);
     const T& operator[] (Rank r) const;
 
+    T remove(Rank r);
+    int remove(Rank lo, Rank hi);
     Rank insert(Rank r, T const& e);
     Rank insert(T const& e) { return insert(_size, e); }
+    void unsort(Rank lo, Rank hi);
+    void unsort() { unsort(0, _size); }
+    void sort(Rank lo, Rank hi);
+    void sort() { sort(0, _size); }
 
     void traverse( void ( * ) ( T& ) );
 };
@@ -86,7 +95,30 @@ void Vector<T>::expand() {
 
 template <typename T>
 void Vector<T>::shrink() {
+    if(_capacity >> 1 < DEFAULT_CAPACITY) return;
+    if(_size > _capacity >> 2) return;
+    T* oldElem = _elem;
+    _elem = new T[_capacity >>= 2];
+    for(int i=0; i < _size; i++) {
+       _elem[i] = oldElem[i]; 
+    }
+    delete [] oldElem;
+}
 
+template <typename T>
+int Vector<T>::remove(Rank lo, Rank hi) {
+    if(lo == hi) return 0;
+    while(hi < _size) _elem[lo++] = _elem[hi++];
+    _size = lo;
+    shrink();
+    return hi - lo;
+}
+
+template <typename T>
+T Vector<T>::remove(Rank r) {
+    T t = _elem[r];
+    remove(r, r + 1);
+    return t;
 }
 
 template <typename T>
@@ -105,4 +137,20 @@ void Vector<T>::traverse(void (*visit)( T& )) {
     for(int i=0; i < _size; i++) {
         visit(_elem[i]);
     }
+}
+
+template <typename T>
+void Vector<T>::unsort(Rank lo, Rank hi) {
+    T* V = _elem + lo;
+    for(Rank i = hi - lo; i > 0; i--) {
+        T t = V[i-1];
+        int r = rand() % i;
+        V[i-1] = V[r];
+        V[r] = t;
+    }
+}
+
+template <typename T>
+void Vector<T>::bubbleSort(Rank lo, Rank hi) {
+        
 }
