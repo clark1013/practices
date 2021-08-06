@@ -13,6 +13,7 @@ protected:
     void expand();  // 扩容
     void shrink();  // 缩容
     void bubbleSort(Rank lo, Rank hi);
+    void merge(Rank lo, Rank mi, Rank hi);
     void mergeSort(Rank lo, Rank hi);
 public:
     // 构造函数
@@ -152,5 +153,55 @@ void Vector<T>::unsort(Rank lo, Rank hi) {
 
 template <typename T>
 void Vector<T>::bubbleSort(Rank lo, Rank hi) {
-        
+    bool sorted = false;
+    while (lo < hi - 1 && !sorted) {
+        sorted = true;
+        for (Rank i = lo; i < hi - 1; i++) {
+            if (_elem[i] > _elem[i+1]) {
+                sorted = false;
+                T t = _elem[i];
+                _elem[i] = _elem[i+1];
+                _elem[i+1] = t;
+            }
+        }
+        hi--;
+    }
+}
+
+template <typename T>
+void Vector<T>::merge(Rank lo, Rank mi, Rank hi) {
+    T* t = new T[mi - lo];
+    Rank p = 0;
+    for (Rank i = lo; i < mi; i++) {
+        t[p++] = _elem[i];
+    }
+
+    Rank p1 = 0;
+    Rank p2 = mi;
+    for(Rank i = lo; i < hi; i++) {
+        if (p1 < mi - lo && p2 < hi) {
+            _elem[i] = t[p1] < _elem[p2] ? t[p1++] : _elem[p2++];
+        } else if (p2 >= hi) {
+            _elem[i] = t[p1++];
+        } else {
+            _elem[i] = _elem[p2++];
+        }
+    }
+
+    delete [] t;
+}
+
+template <typename T>
+void Vector<T>::mergeSort(Rank lo, Rank hi) {
+    if(hi - lo <= 1) return;
+    Rank mi = (lo + hi) >> 1;
+    mergeSort(lo, mi);
+    mergeSort(mi, hi);
+    merge(lo, mi, hi);
+}
+
+template <typename T>
+void Vector<T>::sort(Rank lo, Rank hi) {
+    //bubbleSort(lo, hi);
+    mergeSort(lo, hi);
 }

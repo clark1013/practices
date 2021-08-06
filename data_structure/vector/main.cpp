@@ -9,10 +9,16 @@ int main(int argc, char* argv[]){
     V.insert(3);
     V.insert(4);
     V.insert(5);
+    V.insert(6);
+    V.insert(7);
+    V.insert(8);
 
     print(V);
 
     V.unsort();
+    print(V);
+
+    V.sort();
     print(V);
 
     V.remove(0);
