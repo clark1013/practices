@@ -23,7 +23,7 @@
 - `ngx_http_wait_request_handler`，下一个 handler 为 `ngx_http_process_request_line`
 - `ngx_http_process_request_line` 会读取 http 的请求行，类似于 `"GET / HTTP/1.1"`。并会调用 `ngx_http_process_request_uri` 解析 uri 中的参数。下一个 handler 为 `ngx_http_process_request_headers`。
 - `ngx_http_process_request_headers` 会读取所有 http 头部。并会调用 `ngx_http_process_request -> ngx_http_handler`，下一个 handler 为 `ngx_http_core_run_phases`。
-- 
+- `ngx_http_core_run_phase` 会调用每个 `phase_handler` 的 `checker` 方法。`checker` 在 `ngx_http_init_phase_handlers` 中注册。
 
 
 ## 一个简单的 Hello World 日志文件如下
