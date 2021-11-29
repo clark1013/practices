@@ -13,17 +13,9 @@ type Node struct {
 
 type ExampleSlice []Node
 
-func (e ExampleSlice) Len() int {
-	return len(e)
-}
-
-func (e ExampleSlice) Less(i, j int) bool {
-	return e[i].val < e[j].val
-}
-
-func (e ExampleSlice) Swap(i, j int) {
-	e[i], e[j] = e[j], e[i]
-}
+func (e ExampleSlice) Len() int           { return len(e) }
+func (e ExampleSlice) Less(i, j int) bool { return e[i].val < e[j].val }
+func (e ExampleSlice) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
 
 func (e ExampleSlice) Show() {
 	for _, v := range e {
