@@ -27,9 +27,54 @@
 来源：力扣（LeetCode）
 链接：https://leetcode-cn.com/problems/next-permutation
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+[(1),5,4,3,(2)]
+[1,5,2,(3),(4)]
+[1,2,4,(3),(5)]
+[(2),(3),1,0,0]
+=> 找到右边有比当前值大的最右值
 */
 package leetcode
 
 func NextPermutaion(nums []int) {
+	if len(nums) <= 1 {
+		return
+	}
+	lo, hi := findValidRightMost(nums)
+	swap(&nums, lo, hi)
+	if lo == hi {
+		lo = -1
+	}
+	sort(&nums, lo+1, len(nums))
+}
 
+// 选择排序
+func sort(nums *[]int, lo, hi int) {
+	for i := lo; i < hi; i++ {
+		min := i
+		for j := i; j < hi; j++ {
+			if (*nums)[j] < (*nums)[i] {
+				min = j
+			}
+		}
+		swap(nums, i, min)
+	}
+}
+
+func swap(nums *[]int, i, j int) {
+	(*nums)[i], (*nums)[j] = (*nums)[j], (*nums)[i]
+}
+
+// 找出最右侧满足右边有比当前值大的索引
+func findValidRightMost(nums []int) (lo, hi int) {
+	for i, num := range nums {
+		for j := i + 1; j < len(nums); j++ {
+			if nums[j] > num {
+				lo, hi = i, j
+				// break
+			}
+		}
+	}
+	return
 }
