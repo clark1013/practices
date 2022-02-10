@@ -1,4 +1,4 @@
-use std::convert::From;
+use std::{convert::From, mem};
 
 #[derive(Debug)]
 #[allow(dead_code)]
@@ -75,9 +75,72 @@ fn closure() {
     println!("closure return one: {}", one());
 }
 
+// 9.2.1
+#[allow(dead_code)]
+fn capturing() {
+    let color = String::from("green");
+    let print = || println!("color: {}", color);
+    print();
+    let _reborrow = &color;
+    print();
+    let _color_moved = color;
+
+    let mut count = 0;
+    let mut incr = || {
+        count += 1;
+        println!("count: {}", count);
+    };
+    incr();
+    // let _reborrow = &mut count;
+    incr();
+    let _reborrow = &mut count;
+
+    let moveable = Box::new(12);
+    let consume = || {
+        println!("moveable: {}", moveable);
+        mem::drop(moveable);
+    };
+    consume();
+    // consume();
+
+    let list = vec![1,2,3];
+    let contains = move | item | list.contains(item);
+    println!("contains 1: {}", contains(&1));
+    println!("contains 4: {}", contains(&4));
+    // println!("there are {} items in list", list.len());
+}
+
+fn apply<F>(f: F) where F: FnOnce() {
+    f();
+}
+
+fn apply_to_3<F>(f: F) -> i32 where F: Fn(i32) -> i32 {
+    f(3)
+}
+
+// 9.2.2
+#[allow(dead_code)]
+fn as_input_param() {
+    let greeting = "hello";
+    let mut farewell = "goodbye".to_owned();
+    let diary = || {
+        println!("I said {}", greeting);
+        farewell.push_str("!!!");
+        println!("Then I screamed {}", farewell);
+        println!("Finally I quit.");
+        mem::drop(farewell);
+    };
+    apply(diary);
+
+    let double = | x | x * 2;
+    println!("double of 3 is {}", apply_to_3(double));
+}
+
 fn main() {
     // from_and_into();
     // pointers_ref();
-    if_let();
+    // if_let();
     // closure();
+    // capturing();
+    as_input_param();
 }
