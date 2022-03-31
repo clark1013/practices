@@ -4,9 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -23,9 +27,22 @@ func main() {
 		panic(err)
 	}
 
-	pods, err := clientset.CoreV1().Pods("default").Get(context.Background(), "nginx-deployment-9456bbbf9-cw68b", metav1.GetOptions{})
+	pods, err := clientset.CoreV1().Pods("default").List(context.Background(), metav1.ListOptions{LabelSelector: "app=nginx"})
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v\n", pods.Status)
+	fmt.Printf("%v\n", len(pods.Items))
+
+	informerFactory := informers.NewSharedInformerFactory(clientset, time.Second*5)
+	podInformer := informerFactory.Core().V1().Pods()
+	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    func(obj interface{}) { println("add") },
+		UpdateFunc: func(oldObj, newObj interface{}) { println("update") },
+		DeleteFunc: func(obj interface{}) { println("delete") },
+	})
+	informerFactory.Start(wait.NeverStop)
+	informerFactory.WaitForCacheSync(wait.NeverStop)
+	for {
+
+	}
 }
