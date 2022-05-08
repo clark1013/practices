@@ -27,6 +27,6 @@ enum Key {
 
 impl Key {
     fn encode(self) -> Vec<u8> {
-
+        
     }
 }
