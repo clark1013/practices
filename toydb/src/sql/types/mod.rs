@@ -1,3 +1,6 @@
+use serde_derive::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub enum DataType {
     Boolean,
     Integer,
@@ -5,6 +8,7 @@ pub enum DataType {
     String,
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum Value {
     Null,
     Boolean(bool),
@@ -12,3 +16,5 @@ pub enum Value {
     Float(f64),
     String(String),
 }
+
+pub type Row = Vec<Value>;

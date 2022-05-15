@@ -1,5 +1,6 @@
 use super::types::{DataType, Value};
 use crate::error::Result;
+use serde_derive::{Deserialize, Serialize};
 
 pub trait Catalog {
     fn create_table(&mut self, table: Table) -> Result<()>;
@@ -7,6 +8,7 @@ pub trait Catalog {
     fn read_table(&self, table_name: &str) -> Result<Option<Table>>;
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Column {
     name: String,
     data_type: DataType,
@@ -16,7 +18,8 @@ pub struct Column {
     unique: bool,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Table {
-    name: String,
-    columns: Vec<Column>,
+    pub name: String,
+    pub columns: Vec<Column>,
 }

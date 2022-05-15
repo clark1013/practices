@@ -1,4 +1,5 @@
-mod std_memory;
+pub mod std_memory;
+pub mod encoding;
 
 use std::fmt::Display;
 use crate::error::Result;
