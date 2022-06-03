@@ -34,13 +34,25 @@ impl Catalog for Engine {
     }
 }
 
-// impl super::Trasaction for Engine {
-//     fn create(&self, table_name: &str, row: Row) -> Result<()> {
-//         // TODO: validate whether row is valid
+impl super::Trasaction for Engine {
+    fn create(&mut self, table_name: &str, row: Row) -> Result<()> {
+        let table = self.must_read_table(table_name)?;
+        let primary_key = table.get_row_key(&row)?;
+        // TODO: validate whether row is valid
+        self.store.set(
+            &Key::Row(table_name.to_string(), Some(primary_key)).encode(), 
+            serailize(&row)?
+        )
+    }
 
-//         Ok(())
-//     }
-// }
+    fn read(&self, table_name: &str, id: &Value) -> Result<Option<Row>> {
+        self.store.get(
+            &Key::Row(table_name.to_string(), Some(id.clone())).encode()
+        )?
+        .map(| v | deserialize(&v))
+        .transpose()
+    }
+}
 
 // TODO: need Cow here
 enum Key {
@@ -54,7 +66,7 @@ impl Key {
             Self::Table(name) => [vec![0x01], encoding::encode_string(name.as_str())].concat(),
             Self::Row(table, None) => [vec![0x02], encoding::encode_string(table.as_str())].concat(),
             Self::Row(table, Some(primary_key)) => {
-                [vec![0x02], encoding::encode_string(table.as_str())].concat()
+                [vec![0x02], encoding::encode_string(table.as_str()), encoding::encode_value(&primary_key)].concat()
             }
         }
     }

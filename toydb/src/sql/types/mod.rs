@@ -8,7 +8,7 @@ pub enum DataType {
     String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum Value {
     Null,
     Boolean(bool),
