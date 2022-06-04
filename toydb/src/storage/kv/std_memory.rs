@@ -8,6 +8,7 @@ struct StdMemory {
 }
 
 impl StdMemory {
+    #[allow(dead_code)]
     fn new() -> Self {
         Self {data: BTreeMap::new()}
     }
