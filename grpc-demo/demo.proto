@@ -1,0 +1,23 @@
+ syntax = "proto3";
+ package proto;
+ option go_package = "github.com/clark1013/grpc-demo/gen/go/test/v1";
+
+ message BaseResp {
+  map<string, string> tags = 1; // such as: request_id, trace_id
+  int64 err_code = 2;
+  string err_msg = 3;
+}
+
+ message StringMessage {
+   string value = 1;
+ }
+
+ message TestResponse {
+  string res = 1;
+
+  BaseResp base_resp = 255;
+ }
+
+ service TestService {
+   rpc Echo(StringMessage) returns (TestResponse) {}
+ }
