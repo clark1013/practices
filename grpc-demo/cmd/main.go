@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"net/http"
 	"reflect"
@@ -16,6 +15,7 @@ import (
 	"github.com/tidbcloud/pkgv2/bizerr"
 	grpcbizerr "github.com/tidbcloud/pkgv2/grpc/middleware/bizerr"
 	"go.uber.org/zap"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -32,8 +32,18 @@ func (s *server) Echo(ctx context.Context, t *pb.StringMessage) (*pb.TestRespons
 	// return &pb.TestResponse{}, errcode.NewForbiddenErr(bizerr.New(bizerr.ErrCodeGeneralBusiness, "1234567"))
 	// return &pb.TestResponse{}, bizerr.New(bizerr.ErrCodeGeneralBusiness, "1234567")
 	// return nil, errcode.NewForbiddenErr(bizerr.New(bizerr.ErrCodeGeneralBusiness, "1234567"))
-	return nil, bizerr.New(bizerr.ErrCodeGeneralBusiness, "1234567")
+	// return nil, bizerr.New(bizerr.ErrCodeGeneralBusiness, "1234567")
 	// return nil, status.Error(4000321, "fhdkfdksfe")
+	st := status.New(codes.Code(bizerr.ErrCodeGeneralBusiness), "1212121212")
+	desc := "The username must only contain alphanumeric characters"
+	v := &errdetails.BadRequest_FieldViolation{
+		Field:       "username",
+		Description: desc,
+	}
+	br := &errdetails.BadRequest{}
+	br.FieldViolations = append(br.FieldViolations, v)
+	st, _ = st.WithDetails(br)
+	return nil, st.Err()
 }
 
 func errorConvert(err error) error {
@@ -60,14 +70,14 @@ func main() {
 			grpc_middleware.ChainUnaryServer(
 				// MARK: 解析 bizerr
 				grpcbizerr.UnaryServerInterceptor(func(resp interface{}, err bizerr.BizError) (resp_ interface{}, err_ error) {
-					// typed := getBaseRespFromResp(resp)
-					// if typed == nil {
-					// 	return resp, err
-					// }
-					// typed.ErrCode = int64(err.ErrCode())
-					// typed.ErrMsg = err.ErrMsg()
-					// return resp, nil
-					return resp, status.Error(codes.Code(err.ErrCode()), err.ErrMsg())
+					typed := getBaseRespFromResp(resp)
+					if typed == nil {
+						return resp, err
+					}
+					typed.ErrCode = int64(err.ErrCode())
+					typed.ErrMsg = err.ErrMsg()
+					return resp, nil
+					// return resp, status.Error(codes.Code(err.ErrCode()), err.ErrMsg())
 				}),
 				UnaryServerInterceptor(),
 			),
@@ -90,13 +100,17 @@ func main() {
 	mux := runtime.NewServeMux(
 		runtime.WithErrorHandler(func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, writer http.ResponseWriter, request *http.Request, err error) {
 			s := status.Convert(err)
-			fmt.Println(s.Code())
-			fmt.Println(s.Message())
-			newError := runtime.HTTPStatusError{
-				HTTPStatus: 400,
-				Err:        err,
+			// 在这里处理 error code -> http status code
+			if s != nil && s.Code() > 100 {
+				newError := runtime.HTTPStatusError{
+					HTTPStatus: 400,
+					Err:        err,
+				}
+				runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, writer, request, &newError)
+			} else {
+				runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, writer, request, err)
 			}
-			runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, writer, request, &newError)
+
 		}),
 	)
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
