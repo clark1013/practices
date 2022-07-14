@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"reflect"
@@ -88,6 +89,9 @@ func main() {
 	// MARK: 自定义错误处理
 	mux := runtime.NewServeMux(
 		runtime.WithErrorHandler(func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, writer http.ResponseWriter, request *http.Request, err error) {
+			s := status.Convert(err)
+			fmt.Println(s.Code())
+			fmt.Println(s.Message())
 			newError := runtime.HTTPStatusError{
 				HTTPStatus: 400,
 				Err:        err,
