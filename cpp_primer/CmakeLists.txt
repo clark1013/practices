@@ -5,3 +5,5 @@ project(CppPrimer)
 add_executable(io_tutorail ch1/io_tutorial.cpp)
 add_executable(while_tutorail ch1/while_tutorial.cpp)
 add_executable(for_tutorail ch1/for_tutorial.cpp)
+
+add_executable(pow ch2/pow.cpp)
