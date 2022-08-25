@@ -1,0 +1,4 @@
+- main -> ngx_init_cycle -> ngx_conf_parse 
+- ngx_conf_parse 递归调用
+- 先初始化 core module, ngx_core_module_create_conf/ngx_core_module_init_conf, 赋值到 cycle->conf_ctx
+- 其他模块初始化的时候会先分配内存
