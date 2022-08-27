@@ -1,0 +1,1 @@
+- ngx_event_actions 定义了对于事件的一些管理方法，同时定义了宏别名，例如 #define ngx_process_events ngx_event_actions.process_events
