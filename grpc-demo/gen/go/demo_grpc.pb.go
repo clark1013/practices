@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TestServiceClient interface {
 	Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*TestResponse, error)
+	Empty(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error)
 }
 
 type testServiceClient struct {
@@ -42,11 +43,21 @@ func (c *testServiceClient) Echo(ctx context.Context, in *StringMessage, opts ..
 	return out, nil
 }
 
+func (c *testServiceClient) Empty(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error) {
+	out := new(StringMessage)
+	err := c.cc.Invoke(ctx, "/proto.TestService/Empty", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TestServiceServer is the server API for TestService service.
 // All implementations must embed UnimplementedTestServiceServer
 // for forward compatibility
 type TestServiceServer interface {
 	Echo(context.Context, *StringMessage) (*TestResponse, error)
+	Empty(context.Context, *StringMessage) (*StringMessage, error)
 	mustEmbedUnimplementedTestServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedTestServiceServer struct {
 
 func (UnimplementedTestServiceServer) Echo(context.Context, *StringMessage) (*TestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+}
+func (UnimplementedTestServiceServer) Empty(context.Context, *StringMessage) (*StringMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Empty not implemented")
 }
 func (UnimplementedTestServiceServer) mustEmbedUnimplementedTestServiceServer() {}
 
@@ -88,6 +102,24 @@ func _TestService_Echo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TestService_Empty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StringMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestServiceServer).Empty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.TestService/Empty",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestServiceServer).Empty(ctx, req.(*StringMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TestService_ServiceDesc is the grpc.ServiceDesc for TestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var TestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Echo",
 			Handler:    _TestService_Echo_Handler,
+		},
+		{
+			MethodName: "Empty",
+			Handler:    _TestService_Empty_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

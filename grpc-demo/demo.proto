@@ -20,4 +20,5 @@
 
  service TestService {
    rpc Echo(StringMessage) returns (TestResponse) {}
+	 rpc Empty(StringMessage) returns (StringMessage) {}
  }
