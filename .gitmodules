@@ -1,3 +1,6 @@
 [submodule "leveldb_demo/third_party/leveldb"]
 	path = leveldb_demo/third_party/leveldb
 	url = git@github.com:google/leveldb.git
+[submodule "leveldb/third_party/googletest"]
+	path = leveldb/third_party/googletest
+	url = git@github.com:google/googletest.git
