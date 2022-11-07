@@ -3,7 +3,7 @@
 
 namespace leveldb {
 
-template <typename Key, class Comparator> class SkipList {
+template <class Key, class Comparator> class SkipList {
 private:
   struct Node;
 
@@ -28,6 +28,8 @@ private:
   }
 
   Node *NewNode(const Key &key, int height);
+  int RandomHeight();
+  bool Equal(const Key &a, const Key &b) const { return compare_(a, b) == 0; }
 
   // Immutable after construction.
   Comparator const compare_;
@@ -43,8 +45,7 @@ private:
   Random rnd_;
 };
 
-template <typename Key, class Comparator>
-struct SkipList<Key, Comparator>::Node {
+template <class Key, class Comparator> struct SkipList<Key, Comparator>::Node {
   explicit Node(const Key &k) : key(k) {}
 
   Key const key;
@@ -64,7 +65,36 @@ private:
   std::atomic<Node *> next_[1];
 };
 
-template <typename Key, class Comparator>
-typename SkipList<Key, Comparator>::Node *
-SkipList<Key, Comparator>::NewNode(const Key &key, int height) {}
+template <class Key, class Comparator>
+class SkipList<Key, Comparator>::Node *
+SkipList<Key, Comparator>::NewNode(const Key &key, int height) {
+  char *const node_memory = arena_->AllocateAligned(
+      sizeof(Node) + sizeof(std::atomic<Node *>) * (height - 1));
+  return new (node_memory) Node(key);
+}
+
+template <class Key, class Comparator>
+SkipList<Key, Comparator>::SkipList(Comparator cmp, Arena *arena)
+    : compare_(cmp), arena_(arena), head_(NewNode(0, kMaxHeight)),
+      max_height_(1), rnd_(Random(0xdeadbeef)) {
+  for (int i = 0; i < kMaxHeight; i++) {
+    head_->SetNext(i, nullptr);
+  }
+}
+
+template <class Key, class Comparator>
+int SkipList<Key, Comparator>::RandomHeight() {
+  static unsigned const int kBranching = 4;
+  int height = 1;
+  while (height < kMaxHeight && rnd_.OneIn(kBranching)) {
+    height++;
+  }
+  assert(height > 0);
+  assert(height <= kMaxHeight);
+  return height;
+}
+
+template <class Key, class Comparator>
+void SkipList<Key, Comparator>::Insert(const Key &key) {}
+
 } // namespace leveldb
