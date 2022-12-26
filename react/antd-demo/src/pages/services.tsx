@@ -71,6 +71,7 @@ export default () => {
                   dataSource.push({
                     method: method,
                     service: rpc.service,
+                    key: rpc.service + '.' + method,
                   });
                 }
               }
@@ -140,8 +141,8 @@ export default () => {
           treeData = traverse(result, treeData, expandedKeys);
           setTreeData([treeData]);
           setExpandedKeys(expandedKeys);
-          setSelectedKeys(['account-acl']);
-          renderDetails(['account-acl']);
+          setSelectedKeys(['metrics-api']);
+          renderDetails(['metrics-api']);
         },
         (error) => {
           console.log(error);
@@ -153,7 +154,7 @@ export default () => {
     <PageContainer>
       <ProCard ghost gutter={8}>
         <ProCard
-          style={{ minHeight: '90vh', height: '100%' }}
+          style={{ minHeight: '90vh', height: '100px', overflowY: 'scroll' }}
           colSpan={8}
           bordered
         >
@@ -167,7 +168,7 @@ export default () => {
           />
         </ProCard>
         <ProCard
-          style={{ minHeight: '90vh', height: '100%' }}
+          style={{ minHeight: '90vh', height: '100px', overflowY: 'scroll' }}
           colSpan={16}
           bordered
         >

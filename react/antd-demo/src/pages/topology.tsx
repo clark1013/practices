@@ -3,22 +3,25 @@ import { RadialGraph } from '@ant-design/graphs';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { useEffect, useState, useRef } from 'react';
 export default () => {
-  const [data, setData] = useState({nodes: [{"id": "1", "label": ""}], edges: []})
+  const [data, setData] = useState({
+    nodes: [{ id: '1', label: '' }],
+    edges: [],
+  });
   const chartRef = useRef();
   const asyncData = () => {
-    console.log('test')
-  }
+    console.log('test');
+  };
   useEffect(() => {
     fetch('http://localhost:8080/api/topology')
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        setData({nodes: result.nodes, edges: result.edges})
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setData({ nodes: result.nodes, edges: result.edges });
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
   }, []);
 
   return (
@@ -32,13 +35,19 @@ export default () => {
           <RadialGraph
             data={data}
             autoFit={false}
-            behaviors={['drag-node', 'drag-canvas', 'scroll-canvas', 'zoom-canvas']}
+            behaviors={[
+              'drag-node',
+              'drag-canvas',
+              'scroll-canvas',
+              'zoom-canvas',
+            ]}
             layout={{
               unitRadius: 160,
               nodeSize: 36,
-              linkDistance: 200,
-              nodeSpacing: 40,
-              center: [0, 0]
+              linkDistance: 240,
+              nodeSpacing: 60,
+              center: [0, 0],
+              preventOverlap: true,
             }}
             nodeCfg={{
               asyncData,
@@ -49,8 +58,7 @@ export default () => {
               },
               labelCfg: {
                 style: {
-                  fontSize: 10,
-                //   fill: '#ffffff',
+                  fontSize: 12,
                 },
               },
             }}
@@ -63,9 +71,9 @@ export default () => {
                 size: 8,
               },
             }}
-            onReady= {(graph) => {
-                chartRef.current = graph;
-              }}
+            onReady={(graph) => {
+              chartRef.current = graph;
+            }}
           />
         </ProCard>
       </ProCard>
