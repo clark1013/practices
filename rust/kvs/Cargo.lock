@@ -226,6 +226,7 @@ dependencies = [
  "assert_cmd",
  "clap",
  "failure",
+ "log",
  "predicates",
  "serde",
  "serde_json",

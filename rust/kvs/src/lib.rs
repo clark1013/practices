@@ -1,7 +1,8 @@
-pub use engine::KvsEngine;
+pub use engine::{KvStore, KvsEngine};
 pub use error::Result;
-pub use kv::KvStore;
+pub use server::KvsServer;
 
+mod common;
 mod engine;
 mod error;
-mod kv;
+mod server;

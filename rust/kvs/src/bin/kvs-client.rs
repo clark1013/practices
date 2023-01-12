@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use kvs::{KvStore, Result};
+use kvs::{KvStore, KvsEngine, Result};
 use std::env::current_dir;
 
 #[derive(Parser, Debug)]

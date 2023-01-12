@@ -1,4 +1,5 @@
 use crate::error::{KvsError, Result};
+use crate::KvsEngine;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -11,6 +12,53 @@ pub struct KvStore {
     cur_index: u32,
     uncompacted_index: u32,
     mem_table: HashMap<String, u32>,
+}
+
+impl KvsEngine for KvStore {
+    fn set(&mut self, key: String, value: String) -> Result<()> {
+        if self.cur_index - self.uncompacted_index > 1000 {
+            self.compact()?;
+        }
+        let mut p = self.path.clone();
+        p.push(format!("{}.log", self.cur_index));
+        self.mem_table.insert(key.clone(), self.cur_index);
+        self.cur_index += 1;
+        let mut f = File::create(&p)?;
+        let command = Command::Set { key, value };
+        let j = serde_json::to_string(&command)?;
+        f.write_all(j.as_bytes())?;
+        Ok(())
+    }
+
+    fn get(&self, key: String) -> Result<Option<String>> {
+        if let Some(idx) = self.mem_table.get(&key) {
+            let file_name = format!("{}.log", *idx);
+            let f = File::open(self.path.join(file_name))?;
+            let command: Command = serde_json::from_reader(f)?;
+            match command {
+                Command::Set { key: _, value } => Ok(Some(value)),
+                Command::Remove { key: _ } => Err(KvsError::KeyNotFound),
+            }
+        } else {
+            Ok(None)
+        }
+    }
+
+    fn remove(&mut self, key: String) -> Result<()> {
+        if self.mem_table.get(&key).is_some() {
+            self.mem_table.remove(&key);
+        } else {
+            return Err(KvsError::KeyNotFound);
+        }
+        let mut p = self.path.clone();
+        p.push(format!("{}.log", self.cur_index));
+        self.cur_index += 1;
+        let mut f = File::create(&p)?;
+        let command = Command::Remove { key };
+        let j = serde_json::to_string(&command)?;
+        f.write_all(j.as_bytes())?;
+        Ok(())
+    }
 }
 
 impl KvStore {
@@ -35,51 +83,6 @@ impl KvStore {
             mem_table,
         };
         Ok(store)
-    }
-
-    pub fn set(&mut self, key: String, value: String) -> Result<()> {
-        if self.cur_index - self.uncompacted_index > 1000 {
-            self.compact()?;
-        }
-        let mut p = self.path.clone();
-        p.push(format!("{}.log", self.cur_index));
-        self.mem_table.insert(key.clone(), self.cur_index);
-        self.cur_index += 1;
-        let mut f = File::create(&p)?;
-        let command = Command::Set { key, value };
-        let j = serde_json::to_string(&command)?;
-        f.write_all(j.as_bytes())?;
-        Ok(())
-    }
-
-    pub fn get(&self, key: String) -> Result<Option<String>> {
-        if let Some(idx) = self.mem_table.get(&key) {
-            let file_name = format!("{}.log", *idx);
-            let f = File::open(self.path.join(file_name))?;
-            let command: Command = serde_json::from_reader(f)?;
-            match command {
-                Command::Set { key: _, value } => Ok(Some(value)),
-                Command::Remove { key: _ } => Err(KvsError::KeyNotFound),
-            }
-        } else {
-            Ok(None)
-        }
-    }
-
-    pub fn remove(&mut self, key: String) -> Result<()> {
-        if self.mem_table.get(&key).is_some() {
-            self.mem_table.remove(&key);
-        } else {
-            return Err(KvsError::KeyNotFound);
-        }
-        let mut p = self.path.clone();
-        p.push(format!("{}.log", self.cur_index));
-        self.cur_index += 1;
-        let mut f = File::create(&p)?;
-        let command = Command::Remove { key };
-        let j = serde_json::to_string(&command)?;
-        f.write_all(j.as_bytes())?;
-        Ok(())
     }
 
     fn compact(&mut self) -> Result<()> {
