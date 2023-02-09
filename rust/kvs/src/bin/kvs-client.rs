@@ -1,12 +1,15 @@
 use clap::{Parser, Subcommand};
-use kvs::{KvStore, KvsEngine, Result};
-use std::env::current_dir;
+use env_logger::Env;
+use kvs::{Client, KvStore, KvsEngine, Result};
+use log::info;
 
 #[derive(Parser, Debug)]
 #[command(version)]
 struct Arg {
     #[command(subcommand)]
     command: Option<Commands>,
+    #[arg(long, default_value = "localhost:4000")]
+    addr: String,
 }
 
 #[derive(Subcommand, Debug)]
@@ -24,26 +27,19 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
     let arg = Arg::parse();
+    // info!("addr {}", &arg.addr);
+    let mut client = Client::new(arg.addr);
     match arg.command {
         Some(Commands::Get { key }) => {
-            let store = KvStore::open(current_dir()?);
-            if let Some(value) = store?.get(key.unwrap())? {
-                println!("{}", value);
-            } else {
-                println!("Key not found");
-            }
+            client.get(key.unwrap())?;
         }
         Some(Commands::Set { key, value }) => {
-            let store = KvStore::open(current_dir()?);
-            store?.set(key.unwrap(), value.unwrap())?;
+            client.set(key.unwrap(), value.unwrap())?;
         }
         Some(Commands::Rm { key }) => {
-            let store = KvStore::open(current_dir()?);
-            if store?.remove(key.unwrap()).is_err() {
-                println!("Key not found");
-                panic!()
-            }
+            client.remove(key.unwrap())?;
         }
         None => panic!(),
     }

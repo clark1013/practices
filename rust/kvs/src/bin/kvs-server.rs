@@ -1,7 +1,9 @@
 use std::env::current_dir;
 
 use clap::Parser;
+use env_logger::Env;
 use kvs::{KvStore, KvsServer, Result};
+use log::info;
 
 #[derive(Parser)]
 #[command(version)]
@@ -13,8 +15,12 @@ struct Args {
 }
 
 fn main() -> Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
     let args = Args::parse();
-    let server = KvsServer::new(args.addr, KvStore::open(current_dir()?)?);
+    info!("kvs-server {}", env!("CARGO_PKG_VERSION"));
+    info!("storage engine {}", args.engine);
+    info!("address {}", args.addr);
+    let mut server = KvsServer::new(args.addr, KvStore::open(current_dir()?)?);
     server.run()?;
     Ok(())
 }
