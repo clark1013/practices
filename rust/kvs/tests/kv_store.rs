@@ -1,4 +1,6 @@
+use env_logger::Env;
 use kvs::{KvStore, KvsEngine, Result};
+use log::debug;
 use tempfile::TempDir;
 use walkdir::WalkDir;
 
@@ -83,7 +85,9 @@ fn remove_key() -> Result<()> {
 // Test data correctness after compaction.
 #[test]
 fn compaction() -> Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
     let temp_dir = TempDir::new().expect("unable to create temporary working directory");
+    debug!("{}", temp_dir.path().to_path_buf().to_str().unwrap());
     let mut store = KvStore::open(temp_dir.path())?;
 
     let dir_size = || {
@@ -98,6 +102,7 @@ fn compaction() -> Result<()> {
     };
 
     let mut current_size = dir_size();
+    debug!("{}", current_size);
     for iter in 0..1000 {
         for key_id in 0..1000 {
             let key = format!("key{}", key_id);

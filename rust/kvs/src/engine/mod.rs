@@ -9,4 +9,6 @@ pub trait KvsEngine {
 }
 
 pub use kv::KvStore;
+pub use mysled::SledStore;
 mod kv;
+mod mysled;

@@ -1,8 +1,8 @@
-use std::env::current_dir;
+use std::{env::current_dir, thread::panicking};
 
 use clap::Parser;
 use env_logger::Env;
-use kvs::{KvStore, KvsServer, Result};
+use kvs::{KvStore, KvsServer, Result, SledStore};
 use log::info;
 
 #[derive(Parser)]
@@ -20,7 +20,14 @@ fn main() -> Result<()> {
     info!("kvs-server {}", env!("CARGO_PKG_VERSION"));
     info!("storage engine {}", args.engine);
     info!("address {}", args.addr);
-    let mut server = KvsServer::new(args.addr, KvStore::open(current_dir()?)?);
-    server.run()?;
+    if (args.engine == "kvs") {
+        let mut server = KvsServer::new(args.addr, KvStore::open(current_dir()?)?);
+        server.run()?;
+    } else if args.engine == "sled" {
+        let mut server = KvsServer::new(args.addr, SledStore::open(current_dir()?)?);
+        server.run()?;
+    } else {
+        panic!("")
+    }
     Ok(())
 }

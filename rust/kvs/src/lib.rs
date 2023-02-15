@@ -1,5 +1,5 @@
 pub use client::Client;
-pub use engine::{KvStore, KvsEngine};
+pub use engine::{KvStore, KvsEngine, SledStore};
 pub use error::Result;
 pub use server::KvsServer;
 

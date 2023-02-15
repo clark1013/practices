@@ -1,10 +1,12 @@
-use std::{fmt::Display, io};
+use std::{fmt::Display, io, string};
 
 #[derive(Debug)]
 pub enum KvsError {
     KeyNotFound,
     Io,
     Json,
+    Sled,
+    Utf8,
 }
 
 impl From<io::Error> for KvsError {
@@ -19,6 +21,18 @@ impl From<serde_json::Error> for KvsError {
     }
 }
 
+impl From<sled::Error> for KvsError {
+    fn from(_: sled::Error) -> Self {
+        KvsError::Sled
+    }
+}
+
+impl From<string::FromUtf8Error> for KvsError {
+    fn from(_: string::FromUtf8Error) -> Self {
+        KvsError::Utf8
+    }
+}
+
 pub type Result<T> = std::result::Result<T, KvsError>;
 
 impl Display for KvsError {
@@ -27,6 +41,8 @@ impl Display for KvsError {
             KvsError::KeyNotFound => write!(f, "Key not found"),
             KvsError::Io => write!(f, "Io error"),
             KvsError::Json => write!(f, "Json error"),
+            KvsError::Sled => write!(f, "Sled error"),
+            KvsError::Utf8 => write!(f, "Utf8 error"),
         }
     }
 }

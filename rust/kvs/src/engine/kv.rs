@@ -1,5 +1,6 @@
 use crate::error::{KvsError, Result};
 use crate::KvsEngine;
+use log::debug;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -16,7 +17,7 @@ pub struct KvStore {
 
 impl KvsEngine for KvStore {
     fn set(&mut self, key: String, value: String) -> Result<()> {
-        if self.cur_index - self.uncompacted_index > 1000 {
+        if self.cur_index - self.uncompacted_index > 10000 {
             self.compact()?;
         }
         let mut p = self.path.clone();
