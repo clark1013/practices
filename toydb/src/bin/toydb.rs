@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use clap::Parser;
 use config::FileFormat;
+use env_logger::Env;
 use serde::Deserialize;
 use toydb::error::Result;
 
@@ -15,6 +16,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
     let args = Args::parse();
     let config = Config::new(&args.config_file)?;
     let raft_listen = config.clusters.get(&args.id).unwrap().clone();
