@@ -24,6 +24,14 @@ impl Node {
         };
         Ok(node_role.into())
     }
+
+    pub fn id(&self) -> String {
+        match self {
+            Node::Leader(nr) => nr.id.clone(),
+            Node::Candidate(nr) => nr.id.clone(),
+            Node::Follower(nr) => nr.id.clone(),
+        }
+    }
 }
 
 impl From<NodeRole<Follower>> for Node {
