@@ -30,6 +30,7 @@ impl Node {
             id: id.to_owned(),
             peers,
             current_term: 0,
+            voted_for: None,
             role: Follower::new(),
             node_tx,
         };
@@ -52,7 +53,7 @@ impl Node {
         }
     }
 
-    pub async fn handle_message(self, message: Message) {
+    pub async fn handle_message(self, message: Message) -> Result<Self> {
         match self {
             Node::Leader(ns) => ns.handle_message(message).await,
             Node::Candidate(ns) => ns.handle_message(message).await,
@@ -83,6 +84,7 @@ pub struct NodeState<R> {
     id: String,
     peers: Vec<String>,
     current_term: u64,
+    voted_for: Option<String>,
     role: R,
     // the channel is used for send message to other nodes
     node_tx: mpsc::Sender<Message>,
@@ -94,9 +96,14 @@ impl<R> NodeState<R> {
             id: self.id,
             peers: self.peers,
             current_term: self.current_term,
+            voted_for: self.voted_for,
             role,
             node_tx: self.node_tx,
         })
+    }
+
+    fn quorum(&self) -> u64 {
+        (self.peers.len() as u64 + 1) / 2 + 1
     }
 }
 

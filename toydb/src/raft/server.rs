@@ -51,7 +51,8 @@ impl RaftServer {
                 },
                 // receive message from peers
                 Some(message) = tcp_recv_rx.recv() => {
-                    debug!("received message from {}: {:?}", message.from, message);
+                    // debug!("received message from {}: {:?}", message.from, message);
+                    self.node = self.node.handle_message(message).await?;
                 }
                 _ = ticker.tick() =>  {
                     self.node = self.node.tick().await?;

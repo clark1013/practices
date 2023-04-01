@@ -1,7 +1,10 @@
 use rand::Rng;
 
-use crate::{error::Result, raft::message::Message};
-use log::info;
+use crate::{
+    error::Result,
+    raft::message::{Event, Message},
+};
+use log::{error, info};
 
 use super::{candidate::Candidate, Node, NodeState, ELECTION_TIMEOUT_MAX, ELECTION_TIMEOUT_MIN};
 
@@ -25,9 +28,9 @@ impl Follower {
 impl NodeState<Follower> {
     async fn become_cadicate(self) -> Result<NodeState<Candidate>> {
         info!("follower -> candidate, term: {}", self.current_term);
-        let mut node_state = self.become_role(Candidate::new())?;
-        node_state.start_election().await?;
-        Ok(node_state)
+        let mut candidate = self.become_role(Candidate::new())?;
+        candidate.start_election().await?;
+        Ok(candidate)
     }
 
     pub async fn tick(mut self) -> Result<Node> {
@@ -39,5 +42,49 @@ impl NodeState<Follower> {
         }
     }
 
-    pub async fn handle_message(self, message: Message) {}
+    pub async fn handle_message(mut self, message: Message) -> Result<Node> {
+        if message.to != self.id {
+            error!("message.to is invalid, to={}", message.to);
+            return Ok(self.into());
+        }
+        match message.event {
+            Event::RequestVoteReq { term, candidate_id } => {
+                if term < self.current_term {
+                    return Ok(self.into());
+                }
+                if term == self.current_term && self.voted_for.is_some() {
+                    return Ok(self.into());
+                }
+                self.node_tx
+                    .send(Message {
+                        from: self.id.clone(),
+                        to: candidate_id.clone(),
+                        event: Event::RequestVoteResp {
+                            term,
+                            vote_granted: true,
+                        },
+                    })
+                    .await
+                    .unwrap();
+                self.voted_for = Some(candidate_id);
+                self.current_term = term;
+            }
+            Event::RequestVoteResp { .. } => {
+                info!("follower received RequestVoteResp")
+            }
+            Event::AppendEntriesReq { term, leader_id } => {
+                if term < self.current_term {
+                    return Ok(self.into());
+                }
+                // TODO: should the follower change its voted_for?
+                self.voted_for = Some(leader_id);
+                self.current_term = term;
+                self.role.no_viable_leader_ticks = 0;
+            }
+            Event::AppendEntriesResp { .. } => {
+                info!("follower received AppendEntriesResp")
+            }
+        }
+        Ok(self.into())
+    }
 }
