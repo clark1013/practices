@@ -4,6 +4,7 @@ use tokio::net::TcpListener;
 use crate::{
     error::{Error, Result},
     raft::{self, RaftServer},
+    storage,
 };
 
 pub struct Server {
@@ -12,9 +13,13 @@ pub struct Server {
 }
 
 impl Server {
-    pub async fn new(id: &str, peers: HashMap<String, String>) -> Result<Self> {
+    pub async fn new(
+        id: &str,
+        peers: HashMap<String, String>,
+        raft_store: Box<dyn storage::log::LogStore>,
+    ) -> Result<Self> {
         Ok(Server {
-            raft: RaftServer::new(id, peers).await?,
+            raft: RaftServer::new(id, peers, raft_store).await?,
             raft_listener: None,
         })
     }

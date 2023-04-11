@@ -1,8 +1,9 @@
 use super::message::Message;
 use super::node::Node;
 use crate::error::Result;
+use crate::storage;
 use futures::prelude::*;
-use log::{debug, error};
+use log::error;
 use std::{collections::HashMap, time::Duration};
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::mpsc;
@@ -18,7 +19,11 @@ pub struct RaftServer {
 }
 
 impl RaftServer {
-    pub async fn new(id: &str, peers: HashMap<String, String>) -> Result<Self> {
+    pub async fn new(
+        id: &str,
+        peers: HashMap<String, String>,
+        raft_store: Box<dyn storage::log::LogStore>,
+    ) -> Result<Self> {
         let (node_tx, node_rx) = mpsc::channel(32);
         let node = Node::new(
             id,
@@ -51,7 +56,6 @@ impl RaftServer {
                 },
                 // receive message from peers
                 Some(message) = tcp_recv_rx.recv() => {
-                    // debug!("received message from {}: {:?}", message.from, message);
                     self.node = self.node.handle_message(message).await?;
                 }
                 _ = ticker.tick() =>  {

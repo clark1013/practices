@@ -3,7 +3,7 @@ mod follower;
 mod leader;
 
 use super::message::Message;
-use crate::error::Result;
+use crate::{error::Result, storage};
 use candidate::Candidate;
 use follower::Follower;
 use leader::Leader;
@@ -80,12 +80,17 @@ impl From<NodeState<Candidate>> for Node {
     }
 }
 
+// TODO: stop from here in 20230411
 pub struct NodeState<R> {
     id: String,
     peers: Vec<String>,
     current_term: u64,
     voted_for: Option<String>,
     role: R,
+    // log_store saves persistent log entries
+    log_store: Box<dyn storage::log::LogStore>,
+    // kv_store saves current_term and voted_for
+    kv_store: Box<dyn storage::kv::Store>,
     // the channel is used for send message to other nodes
     node_tx: mpsc::Sender<Message>,
 }
