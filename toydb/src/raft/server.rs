@@ -29,6 +29,7 @@ impl RaftServer {
             id,
             peers.iter().map(|(k, _v)| k.to_string()).collect(),
             node_tx,
+            raft_store,
         )
         .await?;
         Ok(RaftServer {

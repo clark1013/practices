@@ -14,26 +14,31 @@ import (
 )
 
 func makeCommits() {
+	commitAsGithubApp()
+	commitOnBehalfOfUser()
+}
+
+func Str2Ptr(t string) *string {
+	return &t
+}
+
+func commitAsGithubApp() {
 	// Shared transport to reuse TCP connections.
 	tr := http.DefaultTransport
-
 	// Wrap the shared transport for use with the app ID 1 authenticating with installation ID 99.
 	// itr, err := ghinstallation.NewKeyFromFile(tr, 315666, 36256853, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
 	itr, err := ghinstallation.NewKeyFromFile(tr, 315666, 36392445, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Use installation transport with github.com/google/go-github
 	client := github.NewClient(&http.Client{Transport: itr})
-
 	ctx := context.Background()
 	// a, b, _, err := client.Repositories.GetContents(ctx, "clark1013", "activity_demo", "/", &github.RepositoryContentGetOptions{})
 	fileContent, _, _, err := client.Repositories.GetContents(ctx, "clarkdgh", "just4test", "github_app.txt", &github.RepositoryContentGetOptions{})
 	if err != nil {
 		panic(err)
 	}
-
 	// Create File as Github App
 	c, _, err := client.Repositories.CreateFile(
 		ctx,
@@ -50,6 +55,10 @@ func makeCommits() {
 		panic(err)
 	}
 	fmt.Println(c)
+}
+
+func commitOnBehalfOfUser() {
+	ctx := context.Background()
 
 	conf := &oauth2.Config{
 		ClientID:     "Iv1.dea6982c48f35a77",
@@ -76,7 +85,7 @@ func makeCommits() {
 	oauthClient := conf.Client(ctx, tok)
 	userClient := github.NewClient(oauthClient)
 
-	fileContent, _, _, err = userClient.Repositories.GetContents(ctx, "clarkdgh", "just4test", "on_behalf_user.txt", &github.RepositoryContentGetOptions{})
+	fileContent, _, _, err := userClient.Repositories.GetContents(ctx, "clarkdgh", "just4test", "on_behalf_user.txt", &github.RepositoryContentGetOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -98,11 +107,7 @@ func makeCommits() {
 	fmt.Println(d)
 }
 
-func Str2Ptr(t string) *string {
-	return &t
-}
-
-func getUserInformation() {
+func getUserByOauth2() {
 	ctx := context.Background()
 	conf := &oauth2.Config{
 		ClientID:     "Iv1.dea6982c48f35a77",
@@ -137,20 +142,90 @@ func getUserInformation() {
 }
 
 func makeDiff() {
-	text1 := "Lorem ipsum dolor.\na"
-	text2 := "Lorem dolor sit amet.\nb"
+	text1 := `Lorem ipsum dolor.
+aaaa
+fdfas
+fdfd
+df32432
+dfdsa
+cfd
+`
+	text2 := `Lorem dolor sit amet.
+aaaa
+fdfas
+fdfd
+df32432
+dfdsa
+bbb`
 	dmp := diffmatchpatch.New()
+
+	// chars1, chars2, lines := dmp.DiffLinesToChars(text1, text2)
+	// fmt.Println(chars1, chars2, lines)
+
 	// diffs := dmp.DiffMain(text1, text2, true)
-	diffs := dmp.DiffCommonOverlap(text1, text2)
-	fmt.Println(diffs)
 	// fmt.Println(dmp.DiffPrettyText(diffs))
 	// fmt.Println(dmp.DiffText1(diffs))
 	// fmt.Println(dmp.DiffText2(diffs))
 	// fmt.Println(dmp.DiffPrettyHtml(diffs))
+	// fmt.Println(dmp.DiffToDelta(diffs))
+
+	// diffs := dmp.DiffHalfMatch(text1, text2)
+	// fmt.Println(diffs)
+
+	patchs := dmp.PatchMake(text1, text2)
+	for _, patch := range patchs {
+		fmt.Println(patch.String())
+	}
+}
+
+func getUserByInstallation() {
+	// Shared transport to reuse TCP connections.
+	tr := http.DefaultTransport
+	// Wrap the shared transport for use with the app ID 1 authenticating with installation ID 99.
+	// itr, err := ghinstallation.NewKeyFromFile(tr, 315666, 36256853, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
+	itr, err := ghinstallation.NewAppsTransportKeyFromFile(tr, 315666, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Use installation transport with github.com/google/go-github
+	client := github.NewClient(&http.Client{Transport: itr})
+	ctx := context.Background()
+	installation, _, err := client.Apps.GetInstallation(ctx, 36392445)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(installation)
+	// ins, err := json.Marshal(installation)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(string(ins))
+}
+
+func ListReposByInstallation() {
+	// Shared transport to reuse TCP connections.
+	tr := http.DefaultTransport
+	// Wrap the shared transport for use with the app ID 1 authenticating with installation ID 99.
+	itr, err := ghinstallation.NewKeyFromFile(tr, 315666, 36392445, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
+	// itr, err := ghinstallation.NewAppsTransportKeyFromFile(tr, 315666, "/Users/wenjiazhi/playground/wenjiazhi.2023-04-09.private-key.pem")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Use installation transport with github.com/google/go-github
+	client := github.NewClient(&http.Client{Transport: itr})
+	ctx := context.Background()
+	repos, _, err := client.Apps.ListRepos(ctx, &github.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(repos)
 }
 
 func main() {
-	// makeCommits()
-	// getUserInformation()
+	// commitAsGithubApp()
+	// commitOnBehalfOfUser()
+	// getUserByOauth2()
 	makeDiff()
+	// getUserByInstallation()
+	// ListReposByInstallation()
 }

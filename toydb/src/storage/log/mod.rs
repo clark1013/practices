@@ -1,5 +1,7 @@
 pub mod memory;
 
+pub use memory::MemoryLogStore;
+
 use crate::error::Result;
 
 pub trait LogStore {

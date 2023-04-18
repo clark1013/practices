@@ -40,7 +40,7 @@ impl LogStore for MemoryLogStore {
 }
 
 impl MemoryLogStore {
-    fn new() -> Self {
+    pub fn new() -> Self {
         MemoryLogStore {
             log: Vec::<Vec<u8>>::new(),
             commited: 0,

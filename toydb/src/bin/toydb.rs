@@ -4,7 +4,7 @@ use clap::Parser;
 use config::FileFormat;
 use env_logger::Env;
 use serde::Deserialize;
-use toydb::error::Result;
+use toydb::{error::Result, storage};
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -22,12 +22,16 @@ async fn main() -> Result<()> {
     let raft_listen = config.clusters.get(&args.id).unwrap().clone();
     let mut peers = config.clusters;
     peers.remove(&args.id);
-    toydb::server::Server::new(&args.id, peers)
-        .await?
-        .listen(&raft_listen)
-        .await?
-        .serve()
-        .await
+    toydb::server::Server::new(
+        &args.id,
+        peers,
+        Box::new(storage::log::MemoryLogStore::new()),
+    )
+    .await?
+    .listen(&raft_listen)
+    .await?
+    .serve()
+    .await
 }
 
 #[derive(Debug, Deserialize)]

@@ -25,7 +25,12 @@ pub enum Node {
 }
 
 impl Node {
-    pub async fn new(id: &str, peers: Vec<String>, node_tx: mpsc::Sender<Message>) -> Result<Self> {
+    pub async fn new(
+        id: &str,
+        peers: Vec<String>,
+        node_tx: mpsc::Sender<Message>,
+        raft_store: Box<dyn storage::log::LogStore>,
+    ) -> Result<Self> {
         let node_state = NodeState {
             id: id.to_owned(),
             peers,
@@ -33,6 +38,7 @@ impl Node {
             voted_for: None,
             role: Follower::new(),
             node_tx,
+            log_store: raft_store,
         };
         Ok(node_state.into())
     }
@@ -80,7 +86,6 @@ impl From<NodeState<Candidate>> for Node {
     }
 }
 
-// TODO: stop from here in 20230411
 pub struct NodeState<R> {
     id: String,
     peers: Vec<String>,
@@ -89,8 +94,6 @@ pub struct NodeState<R> {
     role: R,
     // log_store saves persistent log entries
     log_store: Box<dyn storage::log::LogStore>,
-    // kv_store saves current_term and voted_for
-    kv_store: Box<dyn storage::kv::Store>,
     // the channel is used for send message to other nodes
     node_tx: mpsc::Sender<Message>,
 }
@@ -104,6 +107,7 @@ impl<R> NodeState<R> {
             voted_for: self.voted_for,
             role,
             node_tx: self.node_tx,
+            log_store: self.log_store,
         })
     }
 
@@ -115,11 +119,17 @@ impl<R> NodeState<R> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::Result;
+    use crate::{error::Result, storage::log::MemoryLogStore};
     #[tokio::test]
     async fn new() -> Result<()> {
         let (node_tx, _) = mpsc::channel(1);
-        let node = Node::new("a", vec!["b".to_owned(), "c".to_owned()], node_tx).await?;
+        let node = Node::new(
+            "a",
+            vec!["b".to_owned(), "c".to_owned()],
+            node_tx,
+            Box::new(MemoryLogStore::new()),
+        )
+        .await?;
         match node {
             Node::Follower(node_state) => {
                 assert_eq!(node_state.id, "a");
