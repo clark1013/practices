@@ -224,8 +224,8 @@ func ListReposByInstallation() {
 func main() {
 	// commitAsGithubApp()
 	// commitOnBehalfOfUser()
-	// getUserByOauth2()
-	makeDiff()
+	getUserByOauth2()
+	// makeDiff()
 	// getUserByInstallation()
 	// ListReposByInstallation()
 }
