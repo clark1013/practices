@@ -1,0 +1,16 @@
+.openapi-generator-ignore
+apis/TODOApi.ts
+apis/index.ts
+index.ts
+models/Demo.ts
+models/DemoResponse.ts
+models/DemoResponseData.ts
+models/DemoResponseDataResult.ts
+models/FailedResponse.ts
+models/FailedResponseData.ts
+models/GetV1Data1Response.ts
+models/GetV1Data1ResponseData.ts
+models/GetV1DataResponse.ts
+models/GetV1DataResponseData.ts
+models/index.ts
+runtime.ts
