@@ -1,0 +1,11 @@
+.openapi-generator-ignore
+apis/TODOApi.ts
+apis/index.ts
+index.ts
+models/GetRepositoriesResponse.ts
+models/GetRepositoriesResponseData.ts
+models/GetRepositoriesResponseDataColumnsInner.ts
+models/GetRepositoriesResponseDataResult.ts
+models/GetRepositoriesResponseDataRowsInner.ts
+models/index.ts
+runtime.ts

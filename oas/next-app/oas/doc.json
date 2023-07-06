@@ -1,0 +1,217 @@
+{
+  "openapi": "3.0.3",
+  "components": {
+    "schemas": {
+      "getRepositoriesResponse": {
+        "properties": {
+          "data": {
+            "properties": {
+              "columns": {
+                "items": {
+                  "properties": {
+                    "col": {
+                      "type": "string"
+                    },
+                    "data_type": {
+                      "type": "string"
+                    },
+                    "nullable": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "result": {
+                "properties": {
+                  "code": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "end_ms": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "latency": {
+                    "type": "string"
+                  },
+                  "limit": {
+                    "maximum": 18446744073709552000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "row_affect": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "row_count": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "start_ms": {
+                    "format": "int64",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "rows": {
+                "items": {
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "url"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "columns",
+              "rows",
+              "result"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "scheme": "basic",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "title": "Demo NextJs",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/repositories": {
+      "get": {
+        "operationId": "getRepositories",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "Unauthorized request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "The requested resource was not found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "The requested method is not supported for the specified resource"
+          },
+          "408": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "The server timed out waiting for the request"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "The user has sent too many requests in a given amount of time"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getRepositoriesResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "/repositories",
+        "tags": [
+          "TODO"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://us-west-2.data.dev.tidbcloud.com/api/v1beta/app/dataapp-MpRTmHTN/endpoint"
+    }
+  ]
+}
