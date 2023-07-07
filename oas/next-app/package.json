@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-	"api": "rm -rf gen/api && openapi-generator generate -i oas/doc.json --generator-name typescript-fetch -o gen/api"
+    "api": "rm -rf gen/api && openapi-generator generate -i oas/doc.json --generator-name typescript-fetch -o gen/api"
   },
   "dependencies": {
     "@types/node": "20.4.0",
@@ -22,5 +22,8 @@
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.6.0"
   }
 }
