@@ -15,7 +15,7 @@ struct EmojiArtDocumentView: View {
     var body: some View {
         VStack(spacing: 0) {
             documentBody
-            palette
+            PaletteChooser(fontSize: defaultEmojiFontSize)
         }
     }
     
@@ -34,8 +34,8 @@ struct EmojiArtDocumentView: View {
                     ForEach(document.emojis) {emoji in
                         Text(emoji.text)
                             .font(.system(size: fontSize(for: emoji)))
-                            .position(position(for: emoji, geometry: geometry))
                             .scaleEffect(zoomScale)
+                            .position(position(for: emoji, geometry: geometry))
                     }
                 }
             }
@@ -82,11 +82,11 @@ struct EmojiArtDocumentView: View {
     
     private func convertToEmojiCoordinates(_ location: CGPoint, geometry: GeometryProxy) -> (Int, Int) {
         let center = geometry.frame(in: .local).center
-        let location = CGPoint(
+        let loc = CGPoint(
             x: (location.x - panOffset.width - center.x) / zoomScale,
             y: (location.y - panOffset.height - center.y) / zoomScale
         )
-        return (Int(location.x), Int(location.y))
+        return (Int(loc.x), Int(loc.y))
     }
     
     private func convertFromEmojiCoordinates(location: (x: Int, y: Int), geometry: GeometryProxy) -> CGPoint {
@@ -107,10 +107,10 @@ struct EmojiArtDocumentView: View {
     private func panGesture() -> some Gesture {
         DragGesture()
             .updating($gesturePanOffset) {currentPanState, gesturePanOffset, transaction in
-                gesturePanOffset = currentPanState.translation
+                gesturePanOffset = currentPanState.translation * zoomScale
             }
             .onEnded{finalPanState in
-                steadyPanOffset = (steadyPanOffset + finalPanState.translation) * zoomScale
+                steadyPanOffset =  steadyPanOffset + finalPanState.translation * zoomScale
             }
     }
     
@@ -125,7 +125,7 @@ struct EmojiArtDocumentView: View {
         if let image = image, image.size.width > 0, image.size.height > 0, size.width > 0, size.height > 0 {
             let hZoom = size.width / image.size.width
             let vZoom = size.height / image.size.height
-            steadyPanOffset = CGSize.zero
+            steadyPanOffset = .zero
             steadyZoomScale = min(hZoom, vZoom)
         }
     }
@@ -147,28 +147,6 @@ struct EmojiArtDocumentView: View {
             .onEnded {gestureScaleAtEnded in
                 steadyZoomScale *= gestureScaleAtEnded
             }
-    }
-    
-    var palette: some View {
-        ScollingEmojisView(emojis: testEmojis)
-            .font(.system(size: defaultEmojiFontSize))
-    }
-    
-    var testEmojis = "🍋🍈🐗🐤🐦‍⬛🪯😃😍🤣"
-}
-
-struct ScollingEmojisView: View {
-    var emojis: String
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(emojis.map({String($0)}), id: \.self) { emoji in
-                    Text(emoji)
-                        .onDrag {NSItemProvider(object: emoji as NSString)}
-                }
-            }
-        }
     }
 }
 

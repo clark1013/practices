@@ -10,16 +10,58 @@ import SwiftUI
 class EmojiArtDocument: ObservableObject {
     @Published private(set) var emojiArt: EmojiArtModel {
         didSet {
+            scheduleAutoSave()
             if emojiArt.background != oldValue.background {
                 fetchBackgroundImageIfNessasary()
             }
         }
     }
     
+    private var autoSaveTimer: Timer?
+    
+    private func scheduleAutoSave() {
+        autoSaveTimer?.invalidate()
+        autoSaveTimer = Timer.scheduledTimer(withTimeInterval: AutoSave.coalecscingInterval, repeats: false) { _ in
+            self.autosave()
+        }
+    }
+    
     init() {
-        emojiArt = EmojiArtModel()
-        emojiArt.addEmoji("😁", at: (x: 0, y: 0), size: 80)
-        emojiArt.addEmoji("🙂", at: (x: 100, y: 100), size: 30)
+        if let url = AutoSave.url, let emojiArtModel = try? EmojiArtModel(url: url) {
+            emojiArt = emojiArtModel
+            fetchBackgroundImageIfNessasary()
+        } else {
+            emojiArt = EmojiArtModel()
+        }
+    }
+    
+    private struct AutoSave {
+        static let filename = "Autosave.emojiarat"
+        static var url: URL? {
+            let documentDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            return documentDir?.appendingPathComponent(filename)
+        }
+        static let coalecscingInterval = 5.0
+    }
+    
+    private func autosave() {
+        if let url = AutoSave.url {
+            save(to: url)
+        }
+    }
+    
+    private func save(to url: URL) {
+        let thisFunc = "\(String(describing: self)).\(#function)"
+        do {
+            let data: Data = try emojiArt.json()
+            try data.write(to: url)
+            print("\(thisFunc) success!, data=\(String(data: data, encoding: .utf8) ?? "nil")")
+        } catch let encodingError where encodingError is EncodingError {
+            print("\(thisFunc) encode JSON failed, error=\(encodingError.localizedDescription)")
+        } catch {
+            print("\(thisFunc) error=\(error)")
+        }
+
     }
     
     var emojis: [EmojiArtModel.Emoji] { emojiArt.emojis }
@@ -56,6 +98,7 @@ class EmojiArtDocument: ObservableObject {
         }
     }
     
+    // MARK: - Intent
     func setBackground(_ background: EmojiArtModel.Background) {
         emojiArt.background = background
     }

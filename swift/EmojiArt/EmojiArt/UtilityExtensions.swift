@@ -120,3 +120,10 @@ extension CGPoint {
         CGPoint(x: lhs.x / rhs, y: lhs.y / rhs)
     }
 }
+
+extension RangeReplaceableCollection where Element: Hashable {
+    var squeezed: Self {
+        var set = Set<Element>()
+        return filter{ set.insert($0).inserted }
+    }
+}
