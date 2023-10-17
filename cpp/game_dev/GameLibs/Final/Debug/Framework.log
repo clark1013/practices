@@ -1,0 +1,106 @@
+﻿cl : 命令行 warning D9035: “Gm”选项已否决，并将在将来的版本中移除
+  Framework.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  DebugScreen.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  正在生成代码...
+Modules_d.lib(DSOUND.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(DSOUND.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+Modules_d.lib(d3d9.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(d3d9.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+Modules_d.lib(WINMM.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(WINMM.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+  Framework.vcxproj -> D:\_bookEdition2020\GameLib\Final\lib\GameLib_d.lib
+  子目录或文件 D:\_bookEdition2020\GameLib\Final\include 已经存在。
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\GameLib.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Array.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Array2d.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\AutoPtr.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Compressor.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Conversion.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\DebugStream.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Hash.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\HashMap.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\HashMultiMap.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\HashSet.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\IBinaryStream.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\List.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\MemoryManager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\OStringStream.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Pool.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\PrimeNumber.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Queue.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\RefString.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\SharedPtr.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Stack.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Tank.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Vector.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\Array2dImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\ArrayImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\AutoPtrImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\ConstantTypeTemplate.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\HashImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\HashMapImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\HashMultiMapImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\HashSetImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\ListImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\OStringStreamImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\PoolImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\QueueImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\ReferenceType.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\ReferenceTypeTemplate.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\SharedPtrImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\StackImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\TankImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Base\Impl\VectorImpl.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\FileIO\InFile.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\FileIO\Manager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\FileIO\OutFile.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\Enum.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\IndexBuffer.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\Manager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\Texture.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\Vertex.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Graphics\VertexBuffer.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Input\Joystick.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Input\Keyboard.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Input\Manager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Input\Mouse.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Functions.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Matrix22.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Matrix23.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Matrix33.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Matrix34.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Matrix44.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Random.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Vector2.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Vector3.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Math\Vector4.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\PseudoXml\Attribute.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\PseudoXml\Document.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\PseudoXml\Element.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Animation.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Batch.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\CollisionDetector.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\CollisionMesh.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Container.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Font.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Model.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\PrimitiveRenderer.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\StringRenderer.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Scene\Tree.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Sound\Manager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Sound\Player.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Sound\Wave.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Event.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Functions.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Manager.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Mutex.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Semaphore.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\Threading\Thread.h
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\include\GameLib\WindowCreator\WindowCreator.h
+  复制了 87 个文件
+  已复制         1 个文件。
+  已复制         1 个文件。
+  D:\_bookEdition2020\GameLib\src\GameLibs\Final\..\Modules\lib\Modules_d.pdb
+  已复制         1 个文件。

@@ -1,0 +1,18 @@
+﻿cl : 命令行 warning D9035: “Gm”选项已否决，并将在将来的版本中移除
+  Framework.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+Modules_d.lib(DSOUND.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(DSOUND.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+Modules_d.lib(d3d9.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(d3d9.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+Modules_d.lib(WINMM.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 Modules_d.lib(DINPUT8.dll) 中定义；已忽略第二个定义
+Modules_d.lib(WINMM.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+  Framework.vcxproj -> D:\_bookEdition2020\GameLib\2DActionGame\lib\GameLib_d.lib
+  子目录或文件 D:\_bookEdition2020\GameLib\2DActionGame\include 已经存在。
+  子目录或文件 D:\_bookEdition2020\GameLib\2DActionGame\include\GameLib 已经存在。
+  子目录或文件 D:\_bookEdition2020\GameLib\2DActionGame\include\GameLib\Base 已经存在。
+  已复制         1 个文件。
+  已复制         1 个文件。
+  已复制         1 个文件。
+  D:\_bookEdition2020\GameLib\src\GameLibs\2DActionGame\..\Modules\lib\Modules_d.pdb
+  已复制         1 个文件。

@@ -1,0 +1,243 @@
+﻿  Compressor.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\compressor.cpp(290): warning C4456: “i”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\compressor.cpp(131): note: 参见“i”的声明
+  Conversion.cpp
+  DebugStream.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Halt.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  IBinaryStream.cpp
+  MemoryManager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\memorymanager.cpp(454): warning C4456: “current”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\memorymanager.cpp(436): note: 参见“current”的声明
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\memorymanager.cpp(699): warning C4457: “filename”的声明隐藏了函数参数
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\base\memorymanager.cpp(668): note: 参见“filename”的声明
+  OStringStream.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  PrimeNumber.cpp
+  RefString.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  InFile.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(68): warning C4457: “name”的声明隐藏了函数参数
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(14): note: 参见“name”的声明
+  OutFile.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(68): warning C4457: “name”的声明隐藏了函数参数
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(14): note: 参见“name”的声明
+  IndexBuffer.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(48): warning C4456: “i”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(25): note: 参见“i”的声明
+  Texture.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(48): warning C4456: “i”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(25): note: 参见“i”的声明
+  VertexBuffer.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(48): warning C4456: “i”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(25): note: 参见“i”的声明
+  Joystick.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  d:\windows kits\10\include\10.0.17763.0\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+  Keyboard.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  d:\windows kits\10\include\10.0.17763.0\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+  Mouse.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  d:\windows kits\10\include\10.0.17763.0\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+  Matrix22.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Matrix23.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Matrix33.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  正在生成代码...
+  正在编译...
+  Matrix34.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Matrix44.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Random.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  vector2.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Vector3.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Vector4.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Attribute.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Document.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  DocumentImpl.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Element.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Tag.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Animation.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  AnimationNode.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  Batch.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  CollisionDetector.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\collisiondetector.cpp(263): warning C4456: “n”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\collisiondetector.cpp(217): note: 参见“n”的声明
+  CollisionMesh.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Container.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  Font.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(170): warning C4456: “tit”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(152): note: 参见“tit”的声明
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(214): warning C4456: “dst”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(176): note: 参见“dst”的声明
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(215): warning C4456: “srcPitch”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(196): note: 参见“srcPitch”的声明
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(216): warning C4456: “dstPitch”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(177): note: 参见“dstPitch”的声明
+c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\utility(239): warning C4244: “初始化”: 从“_Ty”转换到“_Ty1”，可能丢失数据
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty1=unsigned short
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xmemory0(881): note: 参见对正在编译的函数 模板 实例化“std::pair<const _Kty,_Ty>::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,0>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&) noexcept”的引用
+          with
+          [
+              _Kty=unsigned short,
+              _Ty=GameLib::Scene::`anonymous-namespace'::FontImplOS::Char
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xmemory0(881): note: 参见对正在编译的函数 模板 实例化“std::pair<const _Kty,_Ty>::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,0>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&) noexcept”的引用
+          with
+          [
+              _Kty=unsigned short,
+              _Ty=GameLib::Scene::`anonymous-namespace'::FontImplOS::Char
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xtree(984): note: 参见对正在编译的函数 模板 实例化“void std::_Default_allocator_traits<_Alloc>::construct<_Ty,std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(_Alloc &,_Objty *const ,std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Alloc=std::allocator<std::_Tree_node<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,std::_Default_allocator_traits<std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>>::void_pointer>>,
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Objty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xtree(983): note: 参见对正在编译的函数 模板 实例化“void std::_Default_allocator_traits<_Alloc>::construct<_Ty,std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(_Alloc &,_Objty *const ,std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Alloc=std::allocator<std::_Tree_node<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,std::_Default_allocator_traits<std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>>::void_pointer>>,
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Objty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xtree(1155): note: 参见对正在编译的函数 模板 实例化“std::_Tree_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_Tree_comp_alloc<_Traits>::_Buynode<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Alloc=std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>,
+              _Traits=std::_Tmap_traits<unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,std::less<unsigned short>,std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>,false>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xtree(1155): note: 参见对正在编译的函数 模板 实例化“std::_Tree_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_Tree_comp_alloc<_Traits>::_Buynode<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Alloc=std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>,
+              _Traits=std::_Tmap_traits<unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,std::less<unsigned short>,std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>,false>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\map(213): note: 参见对正在编译的函数 模板 实例化“std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,_Pr,_Alloc,false>>::emplace<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Kty=unsigned short,
+              _Pr=std::less<unsigned short>,
+              _Alloc=std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\map(213): note: 参见对正在编译的函数 模板 实例化“std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,_Pr,_Alloc,false>>::emplace<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>(std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char> &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Kty=unsigned short,
+              _Pr=std::less<unsigned short>,
+              _Alloc=std::allocator<std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>>
+          ]
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(282): note: 参见对正在编译的函数 模板 实例化“std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::map<unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,std::less<_Kty>,std::allocator<_Ty>>::insert<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,void>(_Valty &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Kty=unsigned short,
+              _Valty=std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>
+          ]
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\fontimplos.h(282): note: 参见对正在编译的函数 模板 实例化“std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::map<unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char,std::less<_Kty>,std::allocator<_Ty>>::insert<std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,void>(_Valty &&)”的引用
+          with
+          [
+              _Ty=std::pair<const unsigned short,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>,
+              _Kty=unsigned short,
+              _Valty=std::pair<int,GameLib::Scene::`anonymous-namespace'::FontImplOS::Char>
+          ]
+  Model.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  PrimitiveRenderer.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  正在生成代码...
+  正在编译...
+  StringRenderer.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Tree.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  TreeTemplate.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\scene\containerimpl.h(54): warning C4010: 单行注释包含行继续符
+  Player.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Wave.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Event.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Mutex.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Semaphore.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Thread.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  WindowCreator.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  正在生成代码...
+  Manager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(68): warning C4457: “name”的声明隐藏了函数参数
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\fileio\archive.h(14): note: 参见“name”的声明
+  Manager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(48): warning C4456: “i”的声明隐藏了上一个本地声明
+  d:\_bookedition2020\gamelib\src\gamelibs\modules\src\graphics\vertexbufferimpl.h(25): note: 参见“i”的声明
+  Manager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  d:\windows kits\10\include\10.0.17763.0\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+  Functions.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Manager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Functions.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+  Manager.cpp
+d:\_bookedition2020\gamelib\src\gamelibs\include\gamelib\base\impl\autoptrimpl.h(6): warning C5037: GameLib::AutoPtr<T>::AutoPtr: 类模板的成员的外部定义不得具有默认参数
+d3d9.lib(d3d9.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 winmm.lib(WINMM.dll) 中定义；已忽略第二个定义
+d3d9.lib(d3d9.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+dsound.lib(DSOUND.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 winmm.lib(WINMM.dll) 中定义；已忽略第二个定义
+dsound.lib(DSOUND.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+dinput8.lib(DINPUT8.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR 已在 winmm.lib(WINMM.dll) 中定义；已忽略第二个定义
+dinput8.lib(DINPUT8.dll) : warning LNK4221: 此对象文件未定义任何之前未定义的公共符号，因此任何耗用此库的链接操作都不会使用此文件
+  Modules.vcxproj -> D:\_bookEdition2020\GameLib\src\GameLibs\Modules\lib\Modules_d.lib

@@ -1,24 +1,26 @@
+#include <algorithm>
+#include <fstream>
 #include <iostream>
 
 template <class T> class Array2D {
 public:
-  Array2D() : mArray(0){};
+  Array2D() : array_(0){};
   ~Array2D() {
-    delete[] mArray;
-    mArray = 0;
+    delete[] array_;
+    array_ = 0;
   }
   void setSize(int width, int height) {
-    mWidth = width;
-    mHeight = height;
-    mArray = new T[width * height];
+    width_ = width;
+    height_ = height;
+    array_ = new T[width * height];
   }
-  T &operator()(int x, int y) { return mArray[mWidth * y + x]; }
-  const T &operator()(int x, int y) const { return mArray[mWidth * y + x]; }
+  T &operator()(int x, int y) { return array_[width_ * y + x]; }
+  const T &operator()(int x, int y) const { return array_[width_ * y + x]; }
 
 private:
-  T *mArray;
-  int mWidth;
-  int mHeight;
+  T *array_;
+  int width_;
+  int height_;
 };
 
 class State {
@@ -38,68 +40,29 @@ private:
   };
   void setSize(const char *stageData, int size);
 
-  int mHeight;
-  int mWidth;
-  Array2D<Object> mObjects;
-  Array2D<bool> mGoalFlags;
+  int height_;
+  int width_;
+  Array2D<Object> objects_;
+  Array2D<bool> goalFlags_;
 };
 
-void State::setSize(const char *stageData, int size) {
-  mWidth = mHeight = 0;
-  const char *d = stageData;
-  while (*d != '\0') {
-  }
-}
-
-const char gStageData[] = "\
-########\n\
-# .. p #\n\
-# oo   #\n\
-#      #\n\
-########";
-const int gStageWidth = 8;
-const int gStageHeight = 5;
-
-enum Object {
-  OBJ_SPACE,
-  OBJ_WALL,
-  OBJ_GOAL,
-  OBJ_BLOCK,
-  OBJ_BLOCK_ON_GOAL,
-  OBJ_MAN,
-  OBJ_MAN_ON_GOAL,
-  OBJ_UNKNOWN,
-};
-
-void initialize(Object *state, int width, int height, const char *stageData);
-void draw(Object *state, int width, int height);
-void update(Object *state, char input, int width, int height);
-bool win(Object *state, int width, int height);
-
-int main() {
-  Object *state = new Object[gStageWidth * gStageHeight];
-  initialize(state, gStageWidth, gStageHeight, gStageData);
-  while (true) {
-    draw(state, gStageWidth, gStageHeight);
-    if (win(state, gStageWidth, gStageWidth)) {
-      break;
+State::State(const char *stageData, int size) {
+  setSize(stageData, size);
+  objects_.setSize(width_, height_);
+  goalFlags_.setSize(width_, height_);
+  for (int y = 0; y < height_; y++) {
+    for (int x = 0; x < width_; x++) {
+      objects_(x, y) = OBJ_WALL;
+      goalFlags_(x, y) = false;
     }
-    std::cout << "a:left s:right w:up z:down. command?" << std::endl;
-    char input;
-    std::cin >> input;
-    update(state, input, gStageWidth, gStageHeight);
   }
-  std::cout << "Congrats, You won the game!" << std::endl;
-  delete[] state;
-  state = 0;
-}
 
-void initialize(Object *state, int width, int height, const char *stageData) {
-  const char *d = stageData;
-  int idx = 0;
-  while (*d != '\0') {
+  int x = 0;
+  int y = 0;
+  for (int i = 0; i < size; i++) {
     Object t;
-    switch (*d) {
+    bool flag = false;
+    switch (stageData[i]) {
     case ' ':
       t = OBJ_SPACE;
       break;
@@ -107,43 +70,106 @@ void initialize(Object *state, int width, int height, const char *stageData) {
       t = OBJ_WALL;
       break;
     case '.':
-      t = OBJ_GOAL;
+      t = OBJ_SPACE;
+      flag = true;
       break;
     case 'o':
       t = OBJ_BLOCK;
       break;
     case 'O':
-      t = OBJ_BLOCK_ON_GOAL;
+      t = OBJ_BLOCK;
+      flag = true;
       break;
     case 'p':
       t = OBJ_MAN;
       break;
     case 'P':
-      t = OBJ_MAN_ON_GOAL;
+      t = OBJ_MAN;
+      flag = true;
+      break;
+    case '\n':
+      x = 0;
+      y++;
+      t = OBJ_UNKNOWN;
       break;
     default:
       t = OBJ_UNKNOWN;
       break;
     }
     if (t != OBJ_UNKNOWN) {
-      state[idx] = t;
-      ++idx;
+      // std::cout << x << "," << y << " " << t << std::endl;
+      objects_(x, y) = t;
+      goalFlags_(x, y) = flag;
+      x++;
     }
-    ++d;
   }
 }
 
-void draw(Object *state, int width, int height) {
-  const char fonts[] = {' ', '#', '.', 'o', 'O', 'p', 'P'};
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      std::cout << fonts[state[y * width + x]];
+void State::setSize(const char *stageData, int size) {
+  width_ = height_ = 0;
+  int x = 0;
+  int y = 0;
+  for (int i = 0; i < size; i++) {
+    switch (stageData[i]) {
+    case ' ':
+    case '#':
+    case '.':
+    case 'o':
+    case 'O':
+    case 'p':
+    case 'P':
+      x++;
+      break;
+    case '\n':
+      y++;
+      width_ = std::max(width_, x);
+      height_ = std::max(height_, y);
+      x = 0;
+      break;
     }
-    std::cout << std::endl;
   }
 }
 
-void update(Object *state, char input, int width, int height) {
+void State::draw() const {
+  for (int y = 0; y < height_; ++y) {
+    for (int x = 0; x < width_; ++x) {
+      bool flag = goalFlags_(x, y);
+      Object obj = objects_(x, y);
+      switch (obj) {
+      case OBJ_WALL:
+        std::cout << '#';
+        break;
+      case OBJ_SPACE:
+        if (flag) {
+          std::cout << '.';
+        } else {
+          std::cout << ' ';
+        }
+        break;
+      case OBJ_BLOCK:
+        if (flag) {
+          std::cout << 'O';
+        } else {
+          std::cout << 'o';
+        }
+        break;
+      case OBJ_MAN:
+        if (flag) {
+          std::cout << 'P';
+        } else {
+          std::cout << 'p';
+        }
+        break;
+      default:
+        break;
+      }
+    }
+    std::cout << '\n';
+  }
+  std::cout << std::endl;
+}
+
+void State::update(char input) {
   int dx = 0;
   int dy = 0;
   switch (input) {
@@ -162,50 +188,102 @@ void update(Object *state, char input, int width, int height) {
   }
 
   // people's position
-  int i = -1;
-  for (i = 0; i < width * height; i++) {
-    if (state[i] == OBJ_MAN || state[i] == OBJ_MAN_ON_GOAL) {
+  int x;
+  int y;
+  bool found = false;
+  for (y = 0; y < height_; y++) {
+    for (x = 0; x < width_; x++) {
+      if (objects_(x, y) == OBJ_MAN) {
+        found = true;
+        break;
+      }
+    }
+    if (found) {
       break;
     }
   }
-  int x = i % width;
-  int y = i / width;
 
   // target position
   int tx = x + dx;
   int ty = y + dy;
-  if (tx < 0 || ty < 0 || tx >= width || ty >= height) {
+  if (tx < 0 || ty < 0 || tx >= width_ || ty >= height_) {
     return;
   }
   std::cout << x << "," << y << "," << tx << "," << ty << std::endl;
 
   // people/target index
-  int pidx = y * width + x;
-  int tidx = ty * width + tx;
+  Object target = objects_(tx, ty);
   // if target is space or goal, just move to the target
-  if (state[tidx] == OBJ_SPACE || state[tidx] == OBJ_GOAL) {
-    state[tidx] = (state[tidx] == OBJ_GOAL) ? OBJ_MAN_ON_GOAL : OBJ_MAN;
-    state[pidx] = (state[pidx] == OBJ_MAN_ON_GOAL) ? OBJ_GOAL : OBJ_SPACE;
-  } else if (state[tidx] == OBJ_BLOCK || state[tidx] == OBJ_BLOCK_ON_GOAL) {
+  if (target == OBJ_SPACE) {
+    objects_(tx, ty) = OBJ_MAN;
+    objects_(x, y) = OBJ_SPACE;
+  } else if (target == OBJ_BLOCK) {
     // target next position
     int ttx = tx + dx;
     int tty = ty + dy;
-    int ttidx = tty * width + ttx;
-    if (state[ttidx] == OBJ_SPACE || state[ttidx] == OBJ_GOAL) {
-      state[ttidx] =
-          (state[ttidx] == OBJ_SPACE) ? OBJ_BLOCK : OBJ_BLOCK_ON_GOAL;
-      state[tidx] =
-          (state[tidx] == OBJ_BLOCK_ON_GOAL) ? OBJ_MAN_ON_GOAL : OBJ_MAN;
-      state[pidx] = (state[pidx] == OBJ_MAN_ON_GOAL) ? OBJ_GOAL : OBJ_SPACE;
+    if (objects_(ttx, tty) == OBJ_SPACE) {
+      objects_(ttx, tty) = OBJ_BLOCK;
+      objects_(tx, ty) = OBJ_MAN;
+      objects_(x, y) = OBJ_SPACE;
     }
   }
 }
 
-bool win(Object *state, int width, int height) {
-  for (int i = 0; i < width * height; i++) {
-    if (state[i] == OBJ_BLOCK) {
-      return false;
+bool State::win() const {
+  for (int y = 0; y < height_; y++) {
+    for (int x = 0; x < width_; x++) {
+      bool flag = goalFlags_(x, y);
+      Object obj = objects_(x, y);
+      if (flag && obj != OBJ_BLOCK) {
+        return false;
+      }
     }
   }
   return true;
+}
+
+void readFile(char **buffer, int *size, const char *filename) {
+  std::ifstream in(filename);
+  if (!in) {
+    *buffer = 0;
+    *size = 0;
+  } else {
+    in.seekg(0, std::ifstream::end);
+    *size = static_cast<int>(in.tellg());
+    in.seekg(0, std::ifstream::beg);
+    *buffer = new char[*size];
+    in.read(*buffer, *size);
+  }
+}
+
+const char gStageData[] = "\
+########\n\
+# .. p #\n\
+# oo   #\n\
+#      #\n\
+########\n";
+const int gStageWidth = 8;
+const int gStageHeight = 5;
+
+int main(int argc, char **argv) {
+  const char *filename = "stageData.txt";
+  if (argc >= 2) {
+    filename = argv[1];
+  }
+  char *stageData;
+  int fileSize;
+  readFile(&stageData, &fileSize, filename);
+  State *state = new State(stageData, fileSize);
+  while (true) {
+    state->draw();
+    std::cout << "a:left d:right w:up s:down. command?" << std::endl;
+    char input;
+    std::cin >> input;
+    state->update(input);
+    if (state->win()) {
+      break;
+    }
+  }
+  std::cout << "Congrats, You won the game!" << std::endl;
+  delete state;
 }
