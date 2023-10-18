@@ -6,8 +6,8 @@ metadata:
     app.kubernetes.io/name: role
     app.kubernetes.io/instance: leader-election-role
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: guestbook
-    app.kubernetes.io/part-of: guestbook
+    app.kubernetes.io/created-by: project
+    app.kubernetes.io/part-of: project
     app.kubernetes.io/managed-by: kustomize
   name: leader-election-role
 rules:

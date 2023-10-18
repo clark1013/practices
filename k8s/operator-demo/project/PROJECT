@@ -2,9 +2,9 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: my.domain
+domain: tutorial.kubebuilder.io
 layout:
 - go.kubebuilder.io/v4
-projectName: guestbook
-repo: my.domain/guestbook
+projectName: project
+repo: tutorial.kubebuilder.io/project
 version: "3"

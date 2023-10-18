@@ -1,4 +1,4 @@
-module my.domain/guestbook
+module tutorial.kubebuilder.io/project
 
 go 1.20
 
