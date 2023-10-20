@@ -1,0 +1,13 @@
+apiVersion: batch.tutorial.kubebuilder.io/v1
+kind: CustomDomain
+metadata:
+  labels:
+    app.kubernetes.io/name: customdomain
+    app.kubernetes.io/instance: customdomain-sample
+    app.kubernetes.io/part-of: project
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: project
+  name: customdomain-sample
+spec:
+  host: "test.wenjiazhi.com"
+  cname: "us-west-2.data.tidbcloud.com"
