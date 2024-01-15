@@ -1,0 +1,32 @@
+[package]
+name = "httpkv"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive"] }
+futures = "0.3.29"
+futures-channel = "0.3.29"
+futures-executor = "0.3.29"
+grpcio = "0.10.4"
+kvproto = { git = "https://github.com/pingcap/kvproto", version = "0.0.2" }
+protobuf = { version = "2", features = ["bytes"] }
+raft = "0.7.0"
+regex = "1.10.2"
+slog = "2.7.0"
+slog-async = "2.8.0"
+slog-stdlog = "4.1.1"
+slog-term = "2.9.0"
+thiserror = "1.0.51"
+
+
+[patch.crates-io]
+raft = { git = "https://github.com/tikv/raft-rs", branch = "master" }
+raft-proto = { git = "https://github.com/tikv/raft-rs", branch = "master" }
+protobuf = { git = "https://github.com/pingcap/rust-protobuf", branch = "v2.8" }
+protobuf-codegen = { git = "https://github.com/pingcap/rust-protobuf", branch = "v2.8" }
+
+[patch.'https://github.com/pingcap/kvproto']
+kvproto = { git = "https://github.com/clark1013/kvproto.git", branch = "mine" }

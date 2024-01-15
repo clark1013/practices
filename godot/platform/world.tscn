@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhf7glouyrkxg"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_2rr8f"]
+[ext_resource type="PackedScene" uid="uid://2h3uoijc53s6" path="res://player.tscn" id="2_ifppw"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_2rr8f")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(0, 0, 32, 0, 32, 136, 80, 136, 104, 152, 152, 152, 192, 120, 232, 120, 232, 152, 264, 152, 264, 104, 288, 104, 288, 0, 320, 0, 320, 184, 0, 184)
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D/CollisionPolygon2D"]
+
+[node name="Player" parent="." instance=ExtResource("2_ifppw")]
+position = Vector2(48, 72)
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(80, 0)
+color = Color(0.505882, 0.831373, 0.360784, 1)

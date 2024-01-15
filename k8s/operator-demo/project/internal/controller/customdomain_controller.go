@@ -26,7 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	cmngr "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	certmngr "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	networking "k8s.io/api/networking/v1"
 	batchv1 "tutorial.kubebuilder.io/project/api/v1"
 )
@@ -69,7 +69,7 @@ func (r *CustomDomainReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	// 	log.Error(err, "create ingress failed")
 	// 	return ctrl.Result{}, err
 	// }
-	var certificate cmngr.Certificate
+	var certificate certmngr.Certificate
 	if err := r.Get(ctx, types.NamespacedName{Namespace: req.Namespace, Name: "quickstart-example-tls"}, &certificate); err != nil {
 		log.Error(err, "unable to fetch certificate")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
