@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1evrdu64f5vi"]
+
+[ext_resource type="PackedScene" uid="uid://dwafj1nokqm8l" path="res://scenes/nocomancer.tscn" id="1_b8sho"]
+[ext_resource type="PackedScene" uid="uid://bc50cl7jof7co" path="res://scenes/player.tscn" id="2_rge4u"]
+
+[node name="BossRoom" type="Node2D"]
+position = Vector2(2.08165e-12, 2.08165e-12)
+
+[node name="Nocomancer" parent="." instance=ExtResource("1_b8sho")]
+position = Vector2(600, 300)
+
+[node name="Player" parent="." instance=ExtResource("2_rge4u")]
+position = Vector2(200, 500)

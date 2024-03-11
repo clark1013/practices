@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://ms5hfokc61ls"]
+
+[ext_resource type="Texture2D" uid="uid://cqw04knqj5osg" path="res://assets/Skeleton enemy.png" id="1_rtc03"]
+[ext_resource type="Script" path="res://scenes/fsm.gd" id="2_cmru0"]
+[ext_resource type="Script" path="res://scenes/state.gd" id="3_213nv"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wvxou"]
+radius = 7.0
+height = 32.0
+
+[node name="Skeleton" type="CharacterBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_rtc03")
+hframes = 13
+vframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_wvxou")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(100, 2.08165e-12)
+offset_left = -10.0
+offset_top = -23.0
+offset_right = 90.0
+offset_bottom = 4.0
+scale = Vector2(0.202871, 0.187171)
+value = 100.0
+
+[node name="Debug" type="Label" parent="."]
+offset_left = -8.0
+offset_top = -31.0
+offset_right = 42.0
+offset_bottom = -5.0
+scale = Vector2(0.319363, 0.293198)
+text = "Debug"
+
+[node name="FSM" type="Node2D" parent="."]
+script = ExtResource("2_cmru0")
+
+[node name="Follow" type="Node2D" parent="FSM"]
+script = ExtResource("3_213nv")
+
+[node name="AttackSkeleton" type="Node2D" parent="FSM"]
+script = ExtResource("3_213nv")
+
+[node name="DeathSkeleton" type="Node2D" parent="FSM"]
+script = ExtResource("3_213nv")
