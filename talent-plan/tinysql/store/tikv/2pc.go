@@ -346,10 +346,19 @@ func (c *twoPhaseCommitter) keySize(key []byte) int {
 }
 
 func (c *twoPhaseCommitter) buildPrewriteRequest(batch batchKeys) *tikvrpc.Request {
-	var req *pb.PrewriteRequest
+	var req pb.PrewriteRequest
 	// YOUR CODE HERE (proj6).
-	panic("YOUR CODE HERE")
-	return tikvrpc.NewRequest(tikvrpc.CmdPrewrite, req, pb.Context{})
+	mutations := make([]*pb.Mutation, len(batch.keys))
+	for i, key := range batch.keys {
+		mutations[i] = &pb.Mutation{Key: key}
+	}
+	req = pb.PrewriteRequest{
+		Mutations:    mutations,
+		PrimaryLock:  c.primary(),
+		LockTtl:      c.lockTTL,
+		StartVersion: c.startTS,
+	}
+	return tikvrpc.NewRequest(tikvrpc.CmdPrewrite, &req, pb.Context{})
 }
 
 func (actionPrewrite) handleSingleBatch(c *twoPhaseCommitter, bo *Backoffer, batch batchKeys) error {
@@ -423,7 +432,6 @@ func (actionCommit) handleSingleBatch(c *twoPhaseCommitter, bo *Backoffer, batch
 	var err error
 	// build and send the commit request
 	// YOUR CODE HERE (proj6).
-	panic("YOUR CODE HERE")
 
 	// If we fail to receive response for the request that commits primary key, it will be undetermined whether this
 	// transaction has been successfully committed.
@@ -446,7 +454,6 @@ func (actionCommit) handleSingleBatch(c *twoPhaseCommitter, bo *Backoffer, batch
 
 	// handle the response and error refer to actionPrewrite.handleSingleBatch
 	// YOUR CODE HERE (proj6).
-	panic("YOUR CODE HERE")
 
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -461,11 +468,9 @@ func (actionCleanup) handleSingleBatch(c *twoPhaseCommitter, bo *Backoffer, batc
 
 	// build and send the rollback request
 	// YOUR CODE HERE (proj6).
-	panic("YOUR CODE HERE")
 	// handle the response and error refer to actionPrewrite.handleSingleBatch
 
 	// YOUR CODE HERE (proj6).
-	panic("YOUR CODE HERE")
 	return nil
 
 }
