@@ -193,7 +193,6 @@ func newRaft(c *Config) *Raft {
 		State:            StateFollower,
 		heartbeatTimeout: c.HeartbeatTick,
 		electionTimeout:  c.ElectionTick,
-		msgs:             make([]pb.Message, 0),
 		votes:            make(map[uint64]bool),
 		Prs:              prs,
 	}
@@ -213,6 +212,13 @@ func (r *Raft) sendAppend(to uint64) bool {
 	}
 	nextIdx := r.Prs[to].Next
 	prevLogIndex := nextIdx - 1
+
+	firstIndex := r.RaftLog.FirstIndex()
+	if firstIndex > nextIdx {
+		r.sendSnapshot(to)
+		return true
+	}
+
 	prevLogTerm, _ := r.RaftLog.Term(prevLogIndex)
 	entries := r.RaftLog.entriesAfterIndex(prevLogIndex)
 	r.msgs = append(r.msgs, pb.Message{
@@ -226,6 +232,21 @@ func (r *Raft) sendAppend(to uint64) bool {
 		Commit:  r.RaftLog.committed,
 	})
 	return true
+}
+
+func (r *Raft) sendSnapshot(to uint64) {
+	snapshot, err := r.RaftLog.storage.Snapshot()
+	if err != nil {
+		log.Errorf("get snapshot failed: %s", err)
+		return
+	}
+	r.msgs = append(r.msgs, pb.Message{
+		MsgType:  pb.MessageType_MsgSnapshot,
+		From:     r.id,
+		To:       to,
+		Term:     r.Term,
+		Snapshot: &snapshot,
+	})
 }
 
 func (r *Raft) sendAppendResponse(to uint64, index uint64, reject bool) {
@@ -375,6 +396,8 @@ func (r *Raft) Step(m pb.Message) error {
 		r.handleAppendEntries(m)
 	case pb.MessageType_MsgAppendResponse:
 		r.handleAppendEntriesResponse(m)
+	case pb.MessageType_MsgSnapshot:
+		r.handleSnapshot(m)
 	}
 
 	return nil
@@ -436,6 +459,9 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 	} else if m.LogTerm == lastTerm && m.Index < lastIndex {
 		upToDate = false
 	}
+	if upToDate {
+		log.Infof("handleRequestVote %d->%d encounter up to date message, income term/index: %d/%d, my term/index: %d/%d", m.From, m.To, m.Term, m.Index, lastTerm, lastIndex)
+	}
 
 	switch r.State {
 	case StateFollower:
@@ -482,15 +508,18 @@ func (r *Raft) handleRequestVoteResponse(m pb.Message) {
 func (r *Raft) checkQuoram() {
 	approved := 0
 	rejected := 0
-	for _, ok := range r.votes {
+	voters := make([]uint64, 0, 5)
+	for voter, ok := range r.votes {
 		if ok {
 			approved++
+			voters = append(voters, voter)
 		} else {
 			rejected++
 		}
 	}
 	if approved > r.quoram() {
 		r.becomeLeader()
+		log.Infof("and voters are: %v", voters)
 	}
 	if rejected > r.quoram() {
 		r.becomeFollower(r.Term, None)
@@ -500,7 +529,7 @@ func (r *Raft) checkQuoram() {
 // handleAppendEntries handle AppendEntries RPC request
 func (r *Raft) handleAppendEntries(m pb.Message) {
 	// Your Code Here (2A).
-	// fmt.Printf("handleAppendEntries %+v %+v \n", r.id, m)
+	// fmt.Printf("handleAppendEntries %+v %+v \n", r.id, m.Commit)
 	if m.Term >= r.Term {
 		r.becomeFollower(m.Term, m.From)
 	} else {
@@ -537,7 +566,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 }
 
 func (r *Raft) handleAppendEntriesResponse(m pb.Message) {
-	// fmt.Printf("handleAppendEntriesResponse %+v\n", m)
+	// fmt.Printf("handleAppendEntriesResponse %d %+v\n", r.id, m)
 	if m.Reject && m.Term > r.Term {
 		r.becomeFollower(m.Term, m.From)
 	}
@@ -561,14 +590,19 @@ func (r *Raft) handleAppendEntriesResponse(m pb.Message) {
 				replicas += 1
 			}
 		}
+
 		if replicas > r.quoram() && fromProgress.Match > r.RaftLog.committed {
 			t, _ := r.RaftLog.Term(fromProgress.Match)
 			if t == r.Term {
 				r.RaftLog.committed = fromProgress.Match
+				for pr := range r.Prs {
+					r.sendAppend(pr)
+				}
 			}
-			for pr := range r.Prs {
-				r.sendAppend(pr)
-			}
+		}
+
+		if fromProgress.Match < r.RaftLog.LastIndex() {
+			r.sendAppend(m.From)
 		}
 	}
 }
@@ -592,9 +626,7 @@ func (r *Raft) handleHeartbeatResponse(m pb.Message) {
 		fromProgress := r.Prs[m.From]
 		lastIndex := r.RaftLog.LastIndex()
 		if lastIndex > fromProgress.Match {
-			for pr := range r.Prs {
-				r.sendAppend(pr)
-			}
+			r.sendAppend(m.From)
 		}
 	}
 
@@ -607,6 +639,78 @@ func (r *Raft) quoram() int {
 // handleSnapshot handle Snapshot RPC request
 func (r *Raft) handleSnapshot(m pb.Message) {
 	// Your Code Here (2C).
+	if r.Term < m.Term {
+		r.Term = m.Term
+		if r.State != StateFollower {
+			r.becomeFollower(r.Term, None)
+		}
+	}
+	if m.Term < r.Term {
+		return
+	}
+
+	metaData := m.Snapshot.Metadata
+	shotIndex := metaData.Index
+	shotTerm := metaData.Term
+	shotConf := metaData.ConfState
+
+	if shotIndex < r.RaftLog.committed || shotIndex < r.RaftLog.FirstIndex() {
+		return
+	}
+	if r.Lead != m.From {
+		r.Lead = m.From
+	}
+
+	// 丢弃之前的所有 entry
+	if len(r.RaftLog.entries) > 0 {
+		if shotIndex >= r.RaftLog.LastIndex() {
+			r.RaftLog.entries = nil
+		} else {
+			r.RaftLog.entries = r.RaftLog.entries[shotIndex-r.RaftLog.FirstIndex()+1:]
+		}
+	}
+
+	r.RaftLog.committed = shotIndex
+	r.RaftLog.applied = shotIndex
+	r.RaftLog.stabled = shotIndex
+
+	// 集群节点变更
+	if shotConf != nil {
+		r.Prs = make(map[uint64]*Progress)
+		for _, node := range shotConf.Nodes {
+			r.Prs[node] = &Progress{}
+			r.Prs[node].Next = r.RaftLog.LastIndex() + 1
+			r.Prs[node].Match = 0
+		}
+	}
+
+	if r.RaftLog.LastIndex() < shotIndex {
+		// 加一个空条目，以指明 lastIndex 和 lastTerm 与快照一致
+		entry := pb.Entry{
+			EntryType: pb.EntryType_EntryNormal,
+			Index:     shotIndex,
+			Term:      shotTerm,
+		}
+		r.RaftLog.entries = append(r.RaftLog.entries, entry)
+	}
+
+	r.RaftLog.pendingSnapshot = m.Snapshot
+	r.sendAppendResponse(m.From, r.RaftLog.LastIndex(), false)
+}
+
+func (r *Raft) softState() *SoftState {
+	return &SoftState{
+		Lead:      r.Lead,
+		RaftState: r.State,
+	}
+}
+
+func (r *Raft) hardState() pb.HardState {
+	return pb.HardState{
+		Term:   r.Term,
+		Vote:   r.Vote,
+		Commit: r.RaftLog.committed,
+	}
 }
 
 // addNode add a new node to raft group

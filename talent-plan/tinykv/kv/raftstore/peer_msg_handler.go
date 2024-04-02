@@ -7,6 +7,7 @@ import (
 	"github.com/Connor1996/badger"
 	"github.com/Connor1996/badger/y"
 	"github.com/pingcap-incubator/tinykv/kv/raftstore/message"
+	"github.com/pingcap-incubator/tinykv/kv/raftstore/meta"
 	"github.com/pingcap-incubator/tinykv/kv/raftstore/runner"
 	"github.com/pingcap-incubator/tinykv/kv/raftstore/snap"
 	"github.com/pingcap-incubator/tinykv/kv/raftstore/util"
@@ -55,59 +56,115 @@ func (d *peerMsgHandler) HandleRaftReady() {
 	d.Send(d.ctx.trans, rd.Messages)
 
 	for _, entry := range rd.CommittedEntries {
+		var proposal *proposal
 		for _, p := range d.proposals {
 			if p.index == entry.Index && p.term == entry.Term {
-				req := raft_cmdpb.Request{}
-				if err := req.Unmarshal(entry.Data); err != nil {
-					panic(err)
+				proposal = p
+			}
+		}
+
+		msg := raft_cmdpb.RaftCmdRequest{}
+		if err := msg.Unmarshal(entry.Data); err != nil {
+			panic(err)
+		}
+
+		if msg.AdminRequest != nil {
+			admin := msg.AdminRequest
+			switch admin.CmdType {
+			case raft_cmdpb.AdminCmdType_CompactLog:
+				compact := admin.CompactLog
+				applyState := rspb.RaftApplyState{
+					TruncatedState: &rspb.RaftTruncatedState{
+						Term:  compact.CompactTerm,
+						Index: compact.CompactIndex,
+					},
 				}
-				switch req.CmdType {
-				case raft_cmdpb.CmdType_Put:
-					err := d.peerStorage.Engines.Kv.Update(func(txn *badger.Txn) error {
-						return txn.Set(
-							engine_util.KeyWithCF(engine_util.CfDefault, req.Put.Key),
-							req.Put.Value,
-						)
-					})
-					if err != nil {
-						log.Errorf("put entry failed", err)
-					}
-					p.cb.Done(&raft_cmdpb.RaftCmdResponse{
-						Header: &raft_cmdpb.RaftResponseHeader{},
-						Responses: []*raft_cmdpb.Response{{
-							CmdType: req.CmdType,
-						}},
-					})
-				case raft_cmdpb.CmdType_Delete:
-					err := d.peerStorage.Engines.Kv.Update(func(txn *badger.Txn) error {
-						tombstone := make([]byte, 0)
-						return txn.Set(
-							engine_util.KeyWithCF(engine_util.CfDefault, req.Delete.Key),
-							tombstone,
-						)
-					})
-					if err != nil {
-						log.Errorf("delete entry failed", err)
-					}
-					p.cb.Done(&raft_cmdpb.RaftCmdResponse{
-						Header: &raft_cmdpb.RaftResponseHeader{},
-						Responses: []*raft_cmdpb.Response{{
-							CmdType: req.CmdType,
-						}},
-					})
-				case raft_cmdpb.CmdType_Snap:
-					txn := d.peerStorage.Engines.Kv.NewTransaction(false)
-					p.cb.Txn = txn
-					p.cb.Done(&raft_cmdpb.RaftCmdResponse{
-						Header: &raft_cmdpb.RaftResponseHeader{},
-						Responses: []*raft_cmdpb.Response{{
-							CmdType: req.CmdType,
-							Snap: &raft_cmdpb.SnapResponse{
-								Region: d.Region(),
-							},
-						}},
-					})
+				kvWB := new(engine_util.WriteBatch)
+				kvWB.SetMeta(meta.ApplyStateKey(d.regionId), &applyState)
+				kvWB.WriteToDB(d.ctx.engine.Kv)
+				d.ScheduleCompactLog(compact.CompactIndex)
+
+				proposal.cb.Done(&raft_cmdpb.RaftCmdResponse{
+					Header: &raft_cmdpb.RaftResponseHeader{},
+					AdminResponse: &raft_cmdpb.AdminResponse{
+						CmdType: raft_cmdpb.AdminCmdType_CompactLog,
+					},
+				})
+			}
+		}
+
+		if len(msg.Requests) == 0 {
+			continue
+		}
+		req := msg.Requests[0]
+		switch req.CmdType {
+		case raft_cmdpb.CmdType_Put:
+			err := d.peerStorage.Engines.Kv.Update(func(txn *badger.Txn) error {
+				return txn.Set(
+					engine_util.KeyWithCF(req.Put.Cf, req.Put.Key),
+					req.Put.Value,
+				)
+			})
+			if err != nil {
+				log.Errorf("put entry failed %s", err)
+			}
+			if proposal != nil {
+				proposal.cb.Done(&raft_cmdpb.RaftCmdResponse{
+					Header: &raft_cmdpb.RaftResponseHeader{},
+					Responses: []*raft_cmdpb.Response{{
+						CmdType: req.CmdType,
+					}},
+				})
+			}
+		case raft_cmdpb.CmdType_Delete:
+			err := d.peerStorage.Engines.Kv.Update(func(txn *badger.Txn) error {
+				return txn.Delete(engine_util.KeyWithCF(req.Delete.Cf, req.Delete.Key))
+			})
+			if err != nil {
+				log.Errorf("delete entry failed %s", err)
+			}
+			if proposal != nil {
+				proposal.cb.Done(&raft_cmdpb.RaftCmdResponse{
+					Header: &raft_cmdpb.RaftResponseHeader{},
+					Responses: []*raft_cmdpb.Response{{
+						CmdType: req.CmdType,
+					}},
+				})
+			}
+		case raft_cmdpb.CmdType_Snap:
+			if proposal != nil {
+				txn := d.peerStorage.Engines.Kv.NewTransaction(false)
+				proposal.cb.Txn = txn
+				proposal.cb.Done(&raft_cmdpb.RaftCmdResponse{
+					Header: &raft_cmdpb.RaftResponseHeader{},
+					Responses: []*raft_cmdpb.Response{{
+						CmdType: req.CmdType,
+						Snap: &raft_cmdpb.SnapResponse{
+							Region: d.Region(),
+						},
+					}},
+				})
+			}
+		case raft_cmdpb.CmdType_Get:
+			if proposal != nil {
+				txn := d.peerStorage.Engines.Kv.NewTransaction(false)
+				item, err := txn.Get(engine_util.KeyWithCF(req.Delete.Cf, req.Get.Key))
+				if err != nil {
+					log.Errorf("get entry failed %s", err)
 				}
+				value, err := item.Value()
+				if err != nil {
+					log.Errorf("decode value failed %s", err)
+				}
+				proposal.cb.Done(&raft_cmdpb.RaftCmdResponse{
+					Header: &raft_cmdpb.RaftResponseHeader{},
+					Responses: []*raft_cmdpb.Response{{
+						CmdType: req.CmdType,
+						Get: &raft_cmdpb.GetResponse{
+							Value: value,
+						},
+					}},
+				})
 			}
 		}
 	}
@@ -185,22 +242,21 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 	}
 	// Your Code Here (2B).
 	log.Debug("proposeRaftCommand", msg)
-	for _, req := range msg.Requests {
-		p := proposal{
-			cb:    cb,
-			index: d.nextProposalIndex(),
-			term:  d.Term(),
-		}
-		d.proposals = append(d.proposals, &p)
 
-		data, err := req.Marshal()
-		if err != nil {
-			log.Errorf("propose marshal failed: %s", err)
-		}
-		err = d.RaftGroup.Propose(data)
-		if err != nil {
-			log.Errorf("propose failed: %s", err)
-		}
+	p := proposal{
+		cb:    cb,
+		index: d.nextProposalIndex(),
+		term:  d.Term(),
+	}
+	d.proposals = append(d.proposals, &p)
+
+	data, err := msg.Marshal()
+	if err != nil {
+		log.Errorf("propose marshal failed: %s", err)
+	}
+	err = d.RaftGroup.Propose(data)
+	if err != nil {
+		log.Errorf("propose failed: %s", err)
 	}
 }
 

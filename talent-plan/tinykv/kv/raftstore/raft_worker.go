@@ -46,6 +46,9 @@ func (rw *raftWorker) run(closeCh <-chan struct{}, wg *sync.WaitGroup) {
 			msgs = append(msgs, <-rw.raftCh)
 		}
 		peerStateMap := make(map[uint64]*peerState)
+		// if len(msgs) > 1000 {
+		// 	fmt.Println(rw.ctx.store.Id, "receive messages length", len(msgs))
+		// }
 		for _, msg := range msgs {
 			peerState := rw.getPeerState(peerStateMap, msg.RegionID)
 			if peerState == nil {

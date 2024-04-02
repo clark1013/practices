@@ -79,6 +79,14 @@ func newLog(storage Storage) *RaftLog {
 // grow unlimitedly in memory
 func (l *RaftLog) maybeCompact() {
 	// Your Code Here (2C).
+	remainedIndex, _ := l.storage.FirstIndex() // 在此之前的均被压缩
+	if len(l.entries) > 0 {
+		if remainedIndex > l.LastIndex() {
+			l.entries = nil
+		} else if remainedIndex >= l.FirstIndex() {
+			l.entries = l.entries[remainedIndex-l.FirstIndex():]
+		}
+	}
 }
 
 // allEntries return all the entries not compacted.
@@ -115,6 +123,15 @@ func (l *RaftLog) nextEnts() (ents []pb.Entry) {
 	return ents
 }
 
+// FirstIndex return the first index of the log entries
+func (l *RaftLog) FirstIndex() uint64 {
+	if len(l.entries) == 0 {
+		index, _ := l.storage.FirstIndex()
+		return index
+	}
+	return l.entries[0].Index
+}
+
 // LastIndex return the last index of the log entries
 func (l *RaftLog) LastIndex() uint64 {
 	// Your Code Here (2A).
@@ -127,7 +144,8 @@ func (l *RaftLog) LastIndex() uint64 {
 
 // Term return the term of the entry in the given index
 func (l *RaftLog) Term(i uint64) (uint64, error) {
-	// Your Code Here (2A).	// Look for the term in the unstable entries
+	// Your Code Here (2A).
+	// Look for the term in the unstable entries
 	for _, entry := range l.entries {
 		if entry.Index == i {
 			return entry.Term, nil
@@ -139,9 +157,14 @@ func (l *RaftLog) Term(i uint64) (uint64, error) {
 
 func (l *RaftLog) entriesAfterIndex(i uint64) []*pb.Entry {
 	result := make([]*pb.Entry, 0)
+	count := 0
 	for j, entry := range l.entries {
+		if count > 20 {
+			break
+		}
 		if entry.Index > i {
 			result = append(result, &l.entries[j])
+			count++
 		}
 	}
 	return result
@@ -153,5 +176,11 @@ func (l *RaftLog) removeEntriesSinceIndex(i uint64) {
 			l.entries = l.entries[:j]
 			l.stabled = i - 1
 		}
+	}
+}
+
+func (l *RaftLog) restore(snapshot *pb.Snapshot) {
+	if snapshot.Metadata.Index > l.committed {
+		l.committed = snapshot.Metadata.Index
 	}
 }
