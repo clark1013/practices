@@ -609,9 +609,13 @@ func TestConfChangeRemoveLeader3B(t *testing.T) {
 	cluster.MustPut([]byte("k0"), []byte("v0"))
 	MustGetNone(cluster.engines[1], []byte("k0"))
 
+	fmt.Println("trans 1")
 	// rejoin and become leader, now store 1 can see it
 	cluster.MustAddPeer(1, NewPeer(1, 1))
+	fmt.Println("trans 2")
 	cluster.MustTransferLeader(1, NewPeer(1, 1))
+
+	fmt.Println("trans 3")
 	cluster.MustPut([]byte("k1"), []byte("v1"))
 	MustGetEqual(cluster.engines[1], []byte("k0"), []byte("v0"))
 	MustGetEqual(cluster.engines[1], []byte("k1"), []byte("v1"))
@@ -620,18 +624,24 @@ func TestConfChangeRemoveLeader3B(t *testing.T) {
 	cluster.MustRemovePeer(1, NewPeer(3, 3))
 	cluster.MustRemovePeer(1, NewPeer(4, 4))
 
+	fmt.Println("trans 4")
 	// now only have (1,1) and (5,5), try to remove (1,1)
 	cluster.MustRemovePeer(1, NewPeer(1, 1))
 
+	fmt.Println("trans 5")
 	// now region 1 only has peer: (5, 5)
 	cluster.MustPut([]byte("k2"), []byte("v2"))
 	MustGetNone(cluster.engines[1], []byte("k2"))
 	// now have (1,1) and (5,5)
+	fmt.Println("trans 6")
 	cluster.MustAddPeer(1, NewPeer(1, 1))
+	fmt.Println("trans 7")
 	cluster.MustPut([]byte("k3"), []byte("v3"))
+	fmt.Println("trans 8")
 	// 3 can not see it
 	MustGetNone(cluster.engines[3], []byte("k3"))
 	MustGetEqual(cluster.engines[1], []byte("k3"), []byte("v3"))
+	fmt.Println("trans 9")
 }
 
 func TestConfChangeRecover3B(t *testing.T) {

@@ -16,6 +16,7 @@ package raft
 
 import (
 	"errors"
+	"fmt"
 
 	"math/rand"
 
@@ -210,6 +211,10 @@ func (r *Raft) sendAppend(to uint64) bool {
 	if r.State != StateLeader {
 		return false
 	}
+	if _, ok := r.Prs[to]; !ok {
+		return false
+	}
+
 	nextIdx := r.Prs[to].Next
 	prevLogIndex := nextIdx - 1
 
@@ -237,9 +242,10 @@ func (r *Raft) sendAppend(to uint64) bool {
 func (r *Raft) sendSnapshot(to uint64) {
 	snapshot, err := r.RaftLog.storage.Snapshot()
 	if err != nil {
-		log.Errorf("get snapshot failed: %s", err)
+		// log.Errorf("get snapshot failed: %s", err)
 		return
 	}
+	log.Errorf("get snapshot success: %+v,%+v", &snapshot, to)
 	r.msgs = append(r.msgs, pb.Message{
 		MsgType:  pb.MessageType_MsgSnapshot,
 		From:     r.id,
@@ -310,6 +316,14 @@ func (r *Raft) sendRequestVoteResponse(to uint64, reject bool) {
 	})
 }
 
+func (r *Raft) sendTimeoutNow(to uint64) {
+	r.msgs = append(r.msgs, pb.Message{
+		MsgType: pb.MessageType_MsgTimeoutNow,
+		From:    r.id,
+		To:      to,
+	})
+}
+
 // tick advances the internal logical clock by a single tick.
 func (r *Raft) tick() {
 	// Your Code Here (2A).
@@ -337,6 +351,7 @@ func (r *Raft) becomeFollower(term uint64, lead uint64) {
 	r.Term = term
 	r.Lead = lead
 	r.electionElapsed = 0
+	r.leadTransferee = None
 }
 
 // becomeCandidate transform this peer's state to candidate
@@ -348,6 +363,7 @@ func (r *Raft) becomeCandidate() {
 	r.votes[r.id] = true
 	r.Vote = r.id
 	r.electionElapsed = 0
+	r.leadTransferee = 0
 }
 
 // becomeLeader transform this peer's state to leader
@@ -356,6 +372,8 @@ func (r *Raft) becomeLeader() {
 	// NOTE: Leader should propose a noop entry on its term
 	log.Infof("%d become leader in term %d", r.id, r.Term)
 	r.State = StateLeader
+	r.Lead = r.id
+	r.leadTransferee = 0
 
 	// Reset next and match indices for all peers
 	lastIndex := r.RaftLog.LastIndex()
@@ -398,6 +416,10 @@ func (r *Raft) Step(m pb.Message) error {
 		r.handleAppendEntriesResponse(m)
 	case pb.MessageType_MsgSnapshot:
 		r.handleSnapshot(m)
+	case pb.MessageType_MsgTransferLeader:
+		r.handleTransferLeader(m)
+	case pb.MessageType_MsgTimeoutNow:
+		r.handleTimeoutNow(m)
 	}
 
 	return nil
@@ -407,6 +429,10 @@ func (r *Raft) handleHup() {
 	if r.State == StateLeader {
 		return
 	}
+	if _, ok := r.Prs[r.id]; !ok {
+		return
+	}
+
 	r.becomeCandidate()
 	r.checkQuoram()
 	for peer := range r.Prs {
@@ -425,10 +451,14 @@ func (r *Raft) handleBeat() {
 }
 
 func (r *Raft) handlePropose(m pb.Message) {
-	// fmt.Printf("handlePropose %+v\n", m)
+	// fmt.Printf("handlePropose %+v %v \n", m, r.RaftLog.committed)
 	if r.State != StateLeader {
 		return
 	}
+	if r.leadTransferee != None {
+		return
+	}
+
 	LastIndex := r.RaftLog.LastIndex()
 	r.Prs[r.id].Match = LastIndex + uint64(len(m.Entries))
 	r.Prs[r.id].Next = r.Prs[r.id].Match + 1
@@ -451,6 +481,10 @@ func (r *Raft) handlePropose(m pb.Message) {
 }
 
 func (r *Raft) handleRequestVote(m pb.Message) {
+	if _, ok := r.Prs[m.From]; !ok {
+		return
+	}
+
 	lastIndex := r.RaftLog.LastIndex()
 	lastTerm, _ := r.RaftLog.Term(lastIndex)
 	upToDate := true
@@ -495,6 +529,10 @@ func (r *Raft) handleRequestVoteResponse(m pb.Message) {
 	switch r.State {
 	case StateFollower:
 	case StateCandidate:
+		if _, ok := r.Prs[r.id]; !ok {
+			return
+		}
+
 		if !m.Reject {
 			r.votes[m.From] = true
 		} else {
@@ -529,7 +567,7 @@ func (r *Raft) checkQuoram() {
 // handleAppendEntries handle AppendEntries RPC request
 func (r *Raft) handleAppendEntries(m pb.Message) {
 	// Your Code Here (2A).
-	// fmt.Printf("handleAppendEntries %+v %+v \n", r.id, m.Commit)
+	// fmt.Printf("handleAppendEntries %+v,%+v\n", r.id, m)
 	if m.Term >= r.Term {
 		r.becomeFollower(m.Term, m.From)
 	} else {
@@ -562,7 +600,8 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			r.RaftLog.committed = m.Commit
 		}
 	}
-	r.sendAppendResponse(m.From, m.Index+uint64(len(m.Entries)), false)
+	r.Lead = m.From
+	r.sendAppendResponse(m.From, lastIndex, false)
 }
 
 func (r *Raft) handleAppendEntriesResponse(m pb.Message) {
@@ -604,6 +643,13 @@ func (r *Raft) handleAppendEntriesResponse(m pb.Message) {
 		if fromProgress.Match < r.RaftLog.LastIndex() {
 			r.sendAppend(m.From)
 		}
+
+		if r.leadTransferee == m.From {
+			r.Step(pb.Message{
+				MsgType: pb.MessageType_MsgTransferLeader,
+				From:    m.From,
+			})
+		}
 	}
 }
 
@@ -613,6 +659,7 @@ func (r *Raft) handleHeartbeat(m pb.Message) {
 	if m.Term >= r.Term {
 		r.becomeFollower(m.Term, m.From)
 	}
+	r.Lead = m.From
 	r.sendHeartbeatResponse(m.From, false)
 }
 
@@ -639,6 +686,7 @@ func (r *Raft) quoram() int {
 // handleSnapshot handle Snapshot RPC request
 func (r *Raft) handleSnapshot(m pb.Message) {
 	// Your Code Here (2C).
+	fmt.Printf("handleSnapshot %v %+v\n", r.id, m)
 	if r.Term < m.Term {
 		r.Term = m.Term
 		if r.State != StateFollower {
@@ -713,12 +761,68 @@ func (r *Raft) hardState() pb.HardState {
 	}
 }
 
+func (r *Raft) handleTransferLeader(m pb.Message) {
+	switch r.State {
+	case StateFollower, StateCandidate:
+		m.To = r.Lead
+		r.msgs = append(r.msgs, m)
+	case StateLeader:
+		transferee := m.From
+		progress, ok := r.Prs[transferee]
+		if !ok {
+			log.Errorf("%d receive transfer leader to unknown peer %d", r.id, transferee)
+			return
+		}
+		if r.id != transferee {
+			r.leadTransferee = transferee
+			if progress.Match < r.RaftLog.LastIndex() {
+				r.sendAppend(transferee)
+			} else {
+				r.sendTimeoutNow(transferee)
+			}
+		}
+	}
+}
+
+func (r *Raft) handleTimeoutNow(m pb.Message) {
+	r.Step(pb.Message{MsgType: pb.MessageType_MsgHup})
+}
+
 // addNode add a new node to raft group
 func (r *Raft) addNode(id uint64) {
 	// Your Code Here (3A).
+	// r.Prs[id] = &Progress{Match: 0, Next: 0}
+	r.Prs[id] = &Progress{Match: 0, Next: r.RaftLog.LastIndex() + 1}
 }
 
 // removeNode remove a node from raft group
 func (r *Raft) removeNode(id uint64) {
 	// Your Code Here (3A).
+	delete(r.Prs, id)
+
+	prReplicas := make(map[uint64]int)
+	for _, pr := range r.Prs {
+		for _, r := range r.Prs {
+			if r.Match >= pr.Match {
+				prReplicas[pr.Match] += 1
+			}
+		}
+	}
+
+	var maxMatch uint64 = 0
+	for k, v := range prReplicas {
+		if v > r.quoram() && k > maxMatch {
+			maxMatch = k
+		}
+	}
+
+	if maxMatch > r.RaftLog.committed {
+		t, _ := r.RaftLog.Term(maxMatch)
+		if t == r.Term {
+			r.RaftLog.committed = maxMatch
+			for pr := range r.Prs {
+				r.sendAppend(pr)
+			}
+		}
+	}
 }

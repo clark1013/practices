@@ -178,9 +178,3 @@ func (l *RaftLog) removeEntriesSinceIndex(i uint64) {
 		}
 	}
 }
-
-func (l *RaftLog) restore(snapshot *pb.Snapshot) {
-	if snapshot.Metadata.Index > l.committed {
-		l.committed = snapshot.Metadata.Index
-	}
-}
