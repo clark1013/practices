@@ -14,6 +14,8 @@
 package schedulers
 
 import (
+	"sort"
+
 	"github.com/pingcap-incubator/tinykv/scheduler/server/core"
 	"github.com/pingcap-incubator/tinykv/scheduler/server/schedule"
 	"github.com/pingcap-incubator/tinykv/scheduler/server/schedule/operator"
@@ -77,6 +79,84 @@ func (s *balanceRegionScheduler) IsScheduleAllowed(cluster opt.Cluster) bool {
 
 func (s *balanceRegionScheduler) Schedule(cluster opt.Cluster) *operator.Operator {
 	// Your Code Here (3C).
+	// select all suitable stores
+	suitStores := make([]*core.StoreInfo, 0)
+	for _, store := range cluster.GetStores() {
+		// should be up and the downTime cannot be longer than MaxStoreDownTime of the cluster
+		if store.IsUp() && store.DownTime() <= cluster.GetMaxStoreDownTime() {
+			suitStores = append(suitStores, store)
+		}
+	}
 
-	return nil
+	if len(suitStores) == 1 || len(suitStores) == 0 {
+		return nil
+	}
+
+	// sort them according to their region size
+	// 递减排序
+	sort.Slice(suitStores, func(i, j int) bool {
+		return suitStores[i].GetRegionSize() > suitStores[j].GetRegionSize()
+	})
+
+	// First, it will try to select a pending region
+	var region *core.RegionInfo
+	for _, suitStore := range suitStores {
+		cluster.GetPendingRegionsWithLock(suitStore.GetID(), func(container core.RegionsContainer) {
+			region = container.RandomRegion(nil, nil)
+		})
+		if region != nil {
+			break
+		}
+		cluster.GetFollowersWithLock(suitStore.GetID(), func(container core.RegionsContainer) {
+			region = container.RandomRegion(nil, nil)
+		})
+		if region != nil {
+			break
+		}
+		cluster.GetLeadersWithLock(suitStore.GetID(), func(container core.RegionsContainer) {
+			region = container.RandomRegion(nil, nil)
+		})
+		if region != nil {
+			break
+		}
+	}
+
+	if region == nil {
+		return nil
+	}
+	if len(region.GetStoreIds()) < cluster.GetMaxReplicas() {
+		return nil
+	}
+
+	var target *core.StoreInfo
+	source := suitStores[0]
+
+	for i := len(suitStores) - 1; i >= 0; i-- {
+		suitStore := suitStores[i]
+		exist := region.GetStorePeer(suitStore.GetID())
+		if exist == nil {
+			target = suitStore
+			break
+		}
+	}
+
+	if target == nil {
+		return nil
+	}
+
+	// make sure that the difference has to be bigger than two times the approximate size of the region
+	diff := source.GetRegionSize() - target.GetRegionSize()
+	if diff <= 2*region.GetApproximateSize() {
+		return nil
+	}
+
+	newPeer, err := cluster.AllocPeer(target.GetID())
+	if err != nil {
+		panic(err)
+	}
+	op, err := operator.CreateMovePeerOperator("balance_region", cluster, region, operator.OpBalance, source.GetID(), target.GetID(), newPeer.GetId())
+	if err != nil {
+		panic(err)
+	}
+	return op
 }
