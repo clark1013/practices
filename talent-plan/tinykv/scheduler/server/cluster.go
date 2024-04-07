@@ -20,6 +20,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pingcap-incubator/tinykv/kv/raftstore/util"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/pingcap-incubator/tinykv/proto/pkg/metapb"
 	"github.com/pingcap-incubator/tinykv/proto/pkg/schedulerpb"
@@ -279,7 +281,42 @@ func (c *RaftCluster) handleStoreHeartbeat(stats *schedulerpb.StoreStats) error 
 // processRegionHeartbeat updates the region information.
 func (c *RaftCluster) processRegionHeartbeat(region *core.RegionInfo) error {
 	// Your Code Here (3C).
+	metaRegion := region.GetMeta()
+	if metaRegion == nil {
+		return nil
+	}
+	// Check whether there is a region with the same Id in local storage
+	oldRegion := c.GetRegion(metaRegion.GetId())
+	if oldRegion == nil {
+		// If there isn’t, scan all regions that overlap with it
+		overlapRegions := c.ScanRegions(metaRegion.GetStartKey(), metaRegion.GetEndKey(), -1)
+		// The heartbeats’ conf_ver and version should be greater or equal than all of them, or the region is stale
+		for _, overlapRegion := range overlapRegions {
+			if metaRegion.GetRegionEpoch() == nil || overlapRegion.GetRegionEpoch() == nil {
+				return errors.Errorf("epoch nil")
+			}
+			if util.IsEpochStale(metaRegion.GetRegionEpoch(), overlapRegion.GetRegionEpoch()) {
+				return errors.Errorf("region heartbeat's epoch is stale")
+			}
+		}
+	} else {
+		// If there is and at least one of the heartbeats’ conf_ver and version is less than its, this heartbeat region is stale
+		if metaRegion.GetRegionEpoch() == nil || oldRegion.GetRegionEpoch() == nil {
+			return errors.Errorf("epoch nil")
+		}
+		if util.IsEpochStale(metaRegion.GetRegionEpoch(), oldRegion.GetRegionEpoch()) {
+			return errors.Errorf("region heartbeat's epoch is stale")
+		}
+	}
 
+	// update local regionInfo
+	err := c.putRegion(region)
+	if err != nil {
+		return err
+	}
+	for _, store := range c.GetStores() {
+		c.updateStoreStatusLocked(store.GetID())
+	}
 	return nil
 }
 

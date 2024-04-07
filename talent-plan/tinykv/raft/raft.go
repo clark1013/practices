@@ -16,7 +16,6 @@ package raft
 
 import (
 	"errors"
-	"fmt"
 
 	"math/rand"
 
@@ -242,10 +241,9 @@ func (r *Raft) sendAppend(to uint64) bool {
 func (r *Raft) sendSnapshot(to uint64) {
 	snapshot, err := r.RaftLog.storage.Snapshot()
 	if err != nil {
-		// log.Errorf("get snapshot failed: %s", err)
+		log.Debugf("get snapshot failed: %s", err)
 		return
 	}
-	log.Errorf("get snapshot success: %+v,%+v", &snapshot, to)
 	r.msgs = append(r.msgs, pb.Message{
 		MsgType:  pb.MessageType_MsgSnapshot,
 		From:     r.id,
@@ -686,7 +684,7 @@ func (r *Raft) quoram() int {
 // handleSnapshot handle Snapshot RPC request
 func (r *Raft) handleSnapshot(m pb.Message) {
 	// Your Code Here (2C).
-	fmt.Printf("handleSnapshot %v %+v\n", r.id, m)
+	// fmt.Printf("handleSnapshot %v %+v\n", r.id, m)
 	if r.Term < m.Term {
 		r.Term = m.Term
 		if r.State != StateFollower {
@@ -791,8 +789,8 @@ func (r *Raft) handleTimeoutNow(m pb.Message) {
 // addNode add a new node to raft group
 func (r *Raft) addNode(id uint64) {
 	// Your Code Here (3A).
-	// r.Prs[id] = &Progress{Match: 0, Next: 0}
-	r.Prs[id] = &Progress{Match: 0, Next: r.RaftLog.LastIndex() + 1}
+	r.Prs[id] = &Progress{Match: 0, Next: 0}
+	// r.Prs[id] = &Progress{Match: 0, Next: r.RaftLog.LastIndex() + 1}
 }
 
 // removeNode remove a node from raft group
